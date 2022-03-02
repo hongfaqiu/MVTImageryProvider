@@ -4,18 +4,6 @@ import { BasicRenderer } from "pbf-basic-render";
 
 import type { Credit, WebMercatorTilingScheme, DefaultProxy, GeographicTilingScheme } from "cesium";
 
-/**
- *
- * @param {Object} options
- * @param {Object} options.style - mapbox style object
- * @param {Function} [options.sourceFilter] - sourceFilter is used to filter which source participate in pickFeature process.
- * @param {Number} [options.maximumLevel] - if cesium zoom level exceeds maximumLevel, layer will be invisible.
- * @param {Number} [options.minimumLevel] - if cesium zoom level belows minimumLevel, layer will be invisible.
- * @param {Number} [options.tileSize] - can be 256 or 512.
- * @param {Boolean} [options.hasAlphaChannel] -
- * @param {String} [options.credit] -
- *
- */
 type MVTImageryProviderOptions = {
   style: any;
   showCanvas?: boolean;
@@ -28,10 +16,12 @@ type MVTImageryProviderOptions = {
   credit?: Credit;
   hasAlphaChannel?: boolean;
   sourceFilter?: any;
-  header?: any;
+  headers?: HeadersInit;
   tilingScheme?: WebMercatorTilingScheme | GeographicTilingScheme;
 }
-
+// 创建一个全局变量作为pbfBasicRenderer渲染模板，避免出现16个canvas上下文的浏览器限制，以便Cesium ImageLayer.destory()正常工作。
+// https://github.com/mapbox/mapbox-gl-js/issues/7332
+const baseCanv = document.createElement('canvas');
 class MVTImageryProvider {
   mapboxRenderer: BasicRenderer;
   ready: boolean;
@@ -43,18 +33,32 @@ class MVTImageryProvider {
   maximumLevel: number;
   minimumLevel: number;
   tileDiscardPolicy: undefined;
+  credit: Credit;
   proxy: DefaultProxy;
   hasAlphaChannel: boolean;
   sourceFilter: any;
   tilingScheme: WebMercatorTilingScheme | GeographicTilingScheme;
   options: MVTImageryProviderOptions;
 
+ 
+  /**
+   * create a MVTImageryProvider Object
+   * @param options MVTImageryProvider options
+   * @param options.style - mapbox style object
+   * @param options.sourceFilter - sourceFilter is used to filter which source participate in pickFeature process.
+   * @param options.maximumLevel - if cesium zoom level exceeds maximumLevel, layer will be invisible.
+   * @param options.minimumLevel - if cesium zoom level belows minimumLevel, layer will be invisible.
+   * @param options.tileSize - can be 256 or 512. 512 default
+   * @param options.headers - url fetch request headers
+   * @param options.tilingScheme - Cesium tilingScheme, default WebMercatorTilingScheme(EPSG: 3857)
+   */
   constructor(options: MVTImageryProviderOptions) {
     this.options = options;
 
     this.mapboxRenderer = new BasicRenderer({
       style: options.style,
-      transformRequest: (url: string, type: any) => this.transformRequest(url, type),
+      canvas: baseCanv,
+      transformRequest: (url: string) => this.transformRequest(url),
     });
 
     if (options.showCanvas) {
@@ -73,17 +77,17 @@ class MVTImageryProvider {
     this.minimumLevel = options.minimumLevel || 0;
     this.tileDiscardPolicy = undefined;
     //this.errorEvent = new Cesium.Event();
+    this.credit = new Cesium.Credit(options.credit || "", false);
     this.proxy = new Cesium.DefaultProxy("");
     this.hasAlphaChannel = options.hasAlphaChannel ?? true;
     this.sourceFilter = options.sourceFilter;
-    this.options = options;
   }
 
-  transformRequest = (url: string, resourceType: string) => {
-    if (resourceType === 'Source' && this.options.header) {
+  transformRequest = (url: string) => {
+    if (this.options.headers) {
       return {
         url,
-        headers: this.options.header
+        headers: this.options.headers
       }
     }
     return {
@@ -91,7 +95,6 @@ class MVTImageryProvider {
     };
   }
 
-  // @ts-ignore
   getTileCredits(x, y, level) {
     return [];
   }
@@ -106,6 +109,17 @@ class MVTImageryProvider {
       ctx.globalCompositeOperation = "copy";
     }
     return canv;
+  }
+
+  async canvasToImage(canvas: HTMLCanvasElement): Promise<HTMLImageElement> {
+    const img = new Image();
+    return new Promise((resolve) => {
+      img.onload = function () {
+        resolve(img);
+      };
+      img.crossOrigin = "";
+      img.src = canvas.toDataURL("image/png");
+    });
   }
 
   requestImage(
@@ -145,7 +159,7 @@ class MVTImageryProvider {
           destTop: 0,
         },
         tilesSpec,
-        (err: any) => {
+        async (err: any) => {
           if (!!err) {
             switch (err) {
               case "canceled":
@@ -157,8 +171,9 @@ class MVTImageryProvider {
             }
           } else {
             if (releaseTile) {
-              renderRef.consumer.ctx = undefined;
-              resolve(canv);
+              renderRef.consumer.ctx = null;
+              const img = await this.canvasToImage(canv);
+              resolve(img);
               // releaseTile默认为true，对应Cesium请求图像的情形
               this.mapboxRenderer.releaseRender(renderRef);
             } else {

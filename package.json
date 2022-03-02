@@ -1,6 +1,6 @@
 {
   "name": "mvt-imagery-provider",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A Mapbox style renderer for CesiumJS",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -31,7 +31,7 @@
     "microbundle": "^0.14.2"
   },
   "dependencies": {
-    "pbf-basic-render": "^0.0.2"
+    "pbf-basic-render": "^0.0.3"
   },
   "files": [
     "dist",
