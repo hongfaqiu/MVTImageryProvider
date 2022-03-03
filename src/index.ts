@@ -40,7 +40,6 @@ class MVTImageryProvider {
   tilingScheme: WebMercatorTilingScheme | GeographicTilingScheme;
   options: MVTImageryProviderOptions;
 
- 
   /**
    * create a MVTImageryProvider Object
    * @param options MVTImageryProvider options
@@ -48,7 +47,7 @@ class MVTImageryProvider {
    * @param options.sourceFilter - sourceFilter is used to filter which source participate in pickFeature process.
    * @param options.maximumLevel - if cesium zoom level exceeds maximumLevel, layer will be invisible.
    * @param options.minimumLevel - if cesium zoom level belows minimumLevel, layer will be invisible.
-   * @param options.tileSize - can be 256 or 512. 512 default
+   * @param options.tileSize - can be 256 or 512. 256 default
    * @param options.headers - url fetch request headers
    * @param options.tilingScheme - Cesium tilingScheme, default WebMercatorTilingScheme(EPSG: 3857)
    */
@@ -93,10 +92,6 @@ class MVTImageryProvider {
     return {
       url
     };
-  }
-
-  getTileCredits(x, y, level) {
-    return [];
   }
 
   createTile() {

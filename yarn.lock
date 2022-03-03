@@ -1325,9 +1325,9 @@ caniuse-lite@^1.0.0, caniuse-lite@^1.0.30001286, caniuse-lite@^1.0.30001297:
   integrity sha512-Wiz1Psk2MEK0pX3rUzWaunLTZzqS2JYZFzNKqAiJGiuxIjRPLgV6+VDPOg6lQOUxmDwhTlh198JsTTi8Hzw6aQ==
 
 cesium@^1.90.0:
-  version "1.90.0"
-  resolved "https://registry.yarnpkg.com/cesium/-/cesium-1.90.0.tgz#ff94e81c4325dc1b475c1003010b12575cf5448a"
-  integrity sha512-/Nzqu3OdtOd/0rHg7rVca1ht3gGRcFg0D8FWTm89oGnc1sqHGLffXMHa774Fev1L0EPwzZN4h9PmfFeJnMXMbw==
+  version "1.91.0"
+  resolved "https://registry.yarnpkg.com/cesium/-/cesium-1.91.0.tgz#3b901913b5dca286406227d588617697ee3b6afc"
+  integrity sha512-HCwwYq7+qqB8c9ydz51luX1KP/apMiMVA8UAu8C7V2SOANUjOZQSi3CcXAtXXn1oUZQDrJlBs6sBT9nt0zRRLg==
 
 chalk@^1.0.0, chalk@^1.1.3:
   version "1.1.3"

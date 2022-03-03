@@ -59,6 +59,20 @@ provider.readyPromise.then(() => {
 
 ```
 
+## Demo
+
+```node
+npm start
+```
+
+## Bugs
+
+[pbf-basic-render](https://github.com/hongfaqiu/pbf-basic-render) caused the following bugs, you could use [kikitte's MVTImageryProvider](https://github.com/kikitte/MVTImageryProvider) instead, or wait for me to fix them.
+
+- Can't render symbol.
+
+- When the tileSize option is small, the rendering quality is poor.
+
 ## Credit
 
 https://github.com/kikitte/MVTImageryProvider
