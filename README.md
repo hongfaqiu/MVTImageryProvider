@@ -42,8 +42,7 @@ const exampleStyle = {
         paint: {
           "fill-color": "#00ffff",
           'fill-outline-color': 'rgba(0,0,0,0.1)',
-        },
-        interactive: true
+        }
       }
     ],
   },
@@ -61,11 +60,15 @@ provider.readyPromise.then(() => {
 
 ## Demo
 
+Launch the app in the demo folder, and then visit http://localhost:8080/
+
 ```node
 cd demo
 yarn
 npm start
 ```
+
+[![ba18S0.png](https://s4.ax1x.com/2022/03/04/ba18S0.png)](https://imgtu.com/i/ba18S0)
 
 ## Bugs
 

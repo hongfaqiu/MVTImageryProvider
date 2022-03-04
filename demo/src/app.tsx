@@ -8,7 +8,7 @@ MapObj.addRasterLayer({
   layerName: 'ESRI全球底图',
   id: '底图-ESRI全球底图',
   method: 'arcgis',
-  url: 'http://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer',
+  url: 'https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer',
 })
 
 MapObj.zoomToViewPort([116.3, 39.9, 15000000]);
