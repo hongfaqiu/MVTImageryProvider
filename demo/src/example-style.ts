@@ -13,7 +13,7 @@ export const exampleStyle = {
       id: "background",
       type: "background",
       paint: {
-        "background-color": "#ddeeff",
+        "background-color": "transparent",
       },
     },
     {

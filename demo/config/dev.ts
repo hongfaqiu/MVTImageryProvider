@@ -1,9 +1,7 @@
 import type { WebpackConfiguration } from "webpack-dev-server";
 
 const DevConfig: WebpackConfiguration = {
-  optimization: {
-    minimize: false
-  },
+  mode: 'development',
   devtool: "source-map"
 }
 

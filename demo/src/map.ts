@@ -1,7 +1,7 @@
 import 'cesium/Widgets/widgets.css';
 import * as Cesium from 'cesium/Cesium';
 
-import MVTImageryProvider from 'mvt-imagery-provider';
+import MVTImageryProvider from './MVTImageryProvider';
 
 import type { ImageryLayer, ImageryProvider, Viewer } from 'cesium';
 

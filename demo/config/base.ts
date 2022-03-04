@@ -9,12 +9,15 @@ const cesiumSource = '../node_modules/cesium/Source';
 const cesiumWorkers = '../Build/Cesium/Workers';
 
 const BaseConfig: WebpackConfiguration = {
-  entry: './src/app.tsx',
-  output: {
-    filename: 'main.js',
-    path: path.resolve(__dirname, 'dist'),
+  entry: {
+    index: {
+      import: './src/app.tsx',
+    },
   },
-  mode: 'development',
+  output: {
+    filename: '[name].bundle.js',
+    path: path.resolve(__dirname, '../dist'),
+  },
   resolve: {
     extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json'],
     alias: {
@@ -31,8 +34,8 @@ const BaseConfig: WebpackConfiguration = {
         exclude: /node-modules/,
         loader: 'babel-loader',
         options: {
-            cacheDirectory: true,
-            cacheCompression: false
+          cacheDirectory: true,
+          cacheCompression: false
         }
       },
       {
@@ -65,12 +68,46 @@ const BaseConfig: WebpackConfiguration = {
     new DefinePlugin({
         //Cesium载入静态的资源的相对路径
         CESIUM_BASE_URL: JSON.stringify('cesium/')
-    })
+    }),
   ],
+  optimization: {
+    minimize: true,
+    splitChunks: {
+      chunks: 'all',
+      minSize: 20000,
+      minRemainingSize: 0,
+      minChunks: 1,
+      maxAsyncRequests: 30,
+      maxInitialRequests: 30,
+      enforceSizeThreshold: 50000,
+      cacheGroups: {
+        defaultVendors: {
+          test: /[\\/]node_modules[\\/]/,
+          priority: -10,
+          reuseExistingChunk: true,
+          name: 'defaultVendors',
+        },
+        cesium: {
+          priority: 2,
+          name:"cesium",
+          test: /[\\/]node_modules[\\/](cesium)[\\/]/,
+        },
+        react: {
+          priority: 3,
+          name:"react",
+          test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
+        },
+        default: {
+          minChunks: 2,
+          priority: -20,
+          reuseExistingChunk: true,
+        },
+      },
+    }
+  },
   devServer: {
-    static: 'dist',      // 开发环境的服务目录
-    hot: true,
-    open: true
+    static: '../dist',      // 开发环境的服务目录
+    hot: true
   }
 };
 

@@ -1,8 +1,22 @@
 import BaseConfig from "./base"
 import DevConfig from "./dev"
+import { CleanWebpackPlugin } from 'clean-webpack-plugin';
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
-const NODE_ENV = process.env.NODE_ENV
+const WebpackConfig = (env: any, argv: { mode: string; }) => {
+  if (argv.mode === 'development') {
+    return { ...BaseConfig, ...DevConfig }
+  }
 
-const WebpackConfig = NODE_ENV === 'prod' ? BaseConfig : { ...BaseConfig, ...DevConfig }
+  if (argv.mode === 'production') {
+    BaseConfig.plugins?.push(
+      new CleanWebpackPlugin(),
+      new BundleAnalyzerPlugin()
+    )
+    return BaseConfig;
+  }
+
+  return BaseConfig;
+};
 
 export default WebpackConfig;
