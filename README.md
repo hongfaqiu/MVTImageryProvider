@@ -62,6 +62,8 @@ provider.readyPromise.then(() => {
 ## Demo
 
 ```node
+cd demo
+yarn
 npm start
 ```
 
