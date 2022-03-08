@@ -4,16 +4,18 @@ export const exampleStyle = {
     countries: {
       type: "vector",
       tiles: ["https://cdn.rawgit.com/klokantech/mapbox-gl-js-offline-example/v1.0/countries/{z}/{x}/{y}.pbf"],
-      maxzoom: 6,
+      maxzoom: 16,
     },
   },
   glyphs: "https://cdn.rawgit.com/klokantech/mapbox-gl-js-offline-example/v1.0/font/{fontstack}/{range}.pbf",
+  sprite: 'https://openmaptiles.github.io/positron-gl-style/sprite',
   layers: [
     {
       id: "background",
       type: "background",
       paint: {
         "background-color": "transparent",
+
       },
     },
     {

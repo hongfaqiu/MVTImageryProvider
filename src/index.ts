@@ -2,10 +2,23 @@
 import * as Cesium from "cesium/Cesium";
 import { BasicRenderer } from "pbf-basic-render";
 
-import type { Credit, WebMercatorTilingScheme, DefaultProxy, GeographicTilingScheme } from "cesium";
+import type { Viewer, Credit, WebMercatorTilingScheme, DefaultProxy, GeographicTilingScheme } from "cesium";
 
+/**
+ *
+ * @param {Object} options
+ * @param {Object} options.style - mapbox style object
+ * @param {Function} [options.sourceFilter] - sourceFilter is used to filter which source participate in pickFeature process.
+ * @param {Number} [options.maximumLevel] - if cesium zoom level exceeds maximumLevel, layer will be invisible.
+ * @param {Number} [options.minimumLevel] - if cesium zoom level belows minimumLevel, layer will be invisible.
+ * @param {Number} [options.tileSize] - can be 256 or 512.
+ * @param {Boolean} [options.hasAlphaChannel] -
+ * @param {String} [options.credit] -
+ *
+ */
 type MVTImageryProviderOptions = {
   style: any;
+  viewer: Viewer;
   showCanvas?: boolean;
   tileSize?: number;
   tileWidth?: number;
@@ -39,6 +52,7 @@ class MVTImageryProvider {
   sourceFilter: any;
   tilingScheme: WebMercatorTilingScheme | GeographicTilingScheme;
   options: MVTImageryProviderOptions;
+  viewer: Viewer;
 
   /**
    * create a MVTImageryProvider Object
@@ -53,6 +67,7 @@ class MVTImageryProvider {
    */
   constructor(options: MVTImageryProviderOptions) {
     this.options = options;
+    this.viewer = options.viewer;
 
     this.mapboxRenderer = new BasicRenderer({
       style: options.style,
@@ -60,18 +75,22 @@ class MVTImageryProvider {
       transformRequest: (url: string) => this.transformRequest(url),
     });
 
+    this.mapboxRenderer._canvas = baseCanv;
+    this.mapboxRenderer._canvas.addEventListener('webglcontextrestored', () => this.mapboxRenderer._createGlContext(), false);
+    this.mapboxRenderer._createGlContext();
+
     if (options.showCanvas) {
       this.mapboxRenderer.showCanvasForDebug();
     }
 
     this.ready = false;
-    this.readyPromise = this.mapboxRenderer._style.loadedPromise.then(() => {
+    this.readyPromise = this.mapboxRenderer.style.loadedPromise.then(() => {
       this.ready = true;
     });
 
     this.tilingScheme = options.tilingScheme ?? new Cesium.WebMercatorTilingScheme();;
     this.rectangle = this.tilingScheme.rectangle;
-    this.tileSize = this.tileWidth = this.tileHeight = options.tileSize || 512;
+    this.tileSize = this.tileWidth = this.tileHeight = options.tileSize || 1024;
     this.maximumLevel = options.maximumLevel || Number.MAX_SAFE_INTEGER;
     this.minimumLevel = options.minimumLevel || 0;
     this.tileDiscardPolicy = undefined;
@@ -204,6 +223,8 @@ class MVTImageryProvider {
           }),
         });
       });
+
+      console.log(queryResult)
 
       // release tile
       renderRef.consumer.ctx = undefined;

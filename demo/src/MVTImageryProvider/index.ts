@@ -1,11 +1,25 @@
 
 import * as Cesium from "cesium/Cesium";
-import { BasicRenderer } from "pbf-basic-render";
+// @ts-ignore
+import { BasicRenderer } from "!./mapbox-gl";
 
-import type { Credit, WebMercatorTilingScheme, DefaultProxy, GeographicTilingScheme } from "cesium";
+import type { Viewer, Credit, WebMercatorTilingScheme, DefaultProxy, GeographicTilingScheme } from "cesium";
 
+/**
+ *
+ * @param {Object} options
+ * @param {Object} options.style - mapbox style object
+ * @param {Function} [options.sourceFilter] - sourceFilter is used to filter which source participate in pickFeature process.
+ * @param {Number} [options.maximumLevel] - if cesium zoom level exceeds maximumLevel, layer will be invisible.
+ * @param {Number} [options.minimumLevel] - if cesium zoom level belows minimumLevel, layer will be invisible.
+ * @param {Number} [options.tileSize] - can be 256 or 512.
+ * @param {Boolean} [options.hasAlphaChannel] -
+ * @param {String} [options.credit] -
+ *
+ */
 type MVTImageryProviderOptions = {
   style: any;
+  viewer: Viewer;
   showCanvas?: boolean;
   tileSize?: number;
   tileWidth?: number;
@@ -21,7 +35,12 @@ type MVTImageryProviderOptions = {
 }
 // 创建一个全局变量作为pbfBasicRenderer渲染模板，避免出现16个canvas上下文的浏览器限制，以便Cesium ImageLayer.destory()正常工作。
 // https://github.com/mapbox/mapbox-gl-js/issues/7332
+const OFFSCREEN_CANV_SIZE = 1024;
 const baseCanv = document.createElement('canvas');
+baseCanv.style.imageRendering = 'pixelated';
+baseCanv.addEventListener('webglcontextlost', () => console.log("webglcontextlost"), false);
+baseCanv.width = OFFSCREEN_CANV_SIZE;
+baseCanv.height = OFFSCREEN_CANV_SIZE;
 class MVTImageryProvider {
   mapboxRenderer: BasicRenderer;
   ready: boolean;
@@ -39,6 +58,7 @@ class MVTImageryProvider {
   sourceFilter: any;
   tilingScheme: WebMercatorTilingScheme | GeographicTilingScheme;
   options: MVTImageryProviderOptions;
+  viewer: Viewer;
 
   /**
    * create a MVTImageryProvider Object
@@ -53,12 +73,16 @@ class MVTImageryProvider {
    */
   constructor(options: MVTImageryProviderOptions) {
     this.options = options;
+    this.viewer = options.viewer;
 
     this.mapboxRenderer = new BasicRenderer({
       style: options.style,
-      canvas: baseCanv,
       transformRequest: (url: string) => this.transformRequest(url),
     });
+
+    this.mapboxRenderer._canvas = baseCanv;
+    this.mapboxRenderer._canvas.addEventListener('webglcontextrestored', () => this.mapboxRenderer._createGlContext(), false);
+    this.mapboxRenderer._createGlContext();
 
     if (options.showCanvas) {
       this.mapboxRenderer.showCanvasForDebug();
@@ -71,10 +95,11 @@ class MVTImageryProvider {
 
     this.tilingScheme = options.tilingScheme ?? new Cesium.WebMercatorTilingScheme();;
     this.rectangle = this.tilingScheme.rectangle;
-    this.tileSize = this.tileWidth = this.tileHeight = options.tileSize || 512;
+    this.tileSize = this.tileWidth = this.tileHeight = options.tileSize || 1024;
     this.maximumLevel = options.maximumLevel || Number.MAX_SAFE_INTEGER;
     this.minimumLevel = options.minimumLevel || 0;
     this.tileDiscardPolicy = undefined;
+    //this.errorEvent = new Cesium.Event();
     this.credit = new Cesium.Credit(options.credit || "", false);
     this.proxy = new Cesium.DefaultProxy("");
     this.hasAlphaChannel = options.hasAlphaChannel ?? true;
@@ -203,6 +228,8 @@ class MVTImageryProvider {
           }),
         });
       });
+
+      console.log(queryResult)
 
       // release tile
       renderRef.consumer.ctx = undefined;

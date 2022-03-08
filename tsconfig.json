@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "skipLibCheck": true,
+    "allowSyntheticDefaultImports": true,
   },
   "include": ["src"],
   "exclude": ["node_modules", "demo", "lib"]

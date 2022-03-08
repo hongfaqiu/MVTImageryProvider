@@ -4,6 +4,8 @@ Render Mapbox style in CesiumJs. This project is very simple, because the comple
 
 ## Install
 
+This module `can't work well` in production environment, please copy [demo's code](https://github.com/hongfaqiu/MVTImageryProvider/blob/main/demo/src/MVTImageryProvider/index.ts) instead of install the npm package.
+
 ```js
 npm install --save mvt-imagery-provider
 
@@ -60,6 +62,8 @@ provider.readyPromise.then(() => {
 
 ## Demo
 
+[online Demo](https://mvti-magery-provider.vercel.app/)
+
 Launch the app in the demo folder, and then visit http://localhost:8080/
 
 ```node
@@ -68,13 +72,14 @@ yarn
 npm start
 ```
 
-[![ba18S0.png](https://s4.ax1x.com/2022/03/04/ba18S0.png)](https://imgtu.com/i/ba18S0)
+| [![bguCSe.png](https://s1.ax1x.com/2022/03/08/bguCSe.png)](https://imgtu.com/i/bguCSe) | [![bguQyj.png](https://s1.ax1x.com/2022/03/08/bguQyj.png)](https://imgtu.com/i/bguQyj) |
+| ------- | ------- |
 
 ## Bugs
 
 [pbf-basic-render](https://github.com/hongfaqiu/pbf-basic-render) caused the following bugs, you could use [kikitte's MVTImageryProvider](https://github.com/kikitte/MVTImageryProvider) instead, or wait for me to fix them.
 
-- Can't render symbol.
+- Can't render line&symbol&sprites.
 
 - When the tileSize option is small, the rendering quality is poor.
 
