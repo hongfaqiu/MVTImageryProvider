@@ -3,7 +3,7 @@ import * as Cesium from "cesium/Cesium";
 // @ts-ignore
 import { BasicRenderer } from "!./mapbox-gl";
 
-import type { Viewer, Credit, WebMercatorTilingScheme, DefaultProxy, GeographicTilingScheme } from "cesium";
+import type { Credit, WebMercatorTilingScheme, DefaultProxy, GeographicTilingScheme } from "cesium";
 
 /**
  *
@@ -19,7 +19,6 @@ import type { Viewer, Credit, WebMercatorTilingScheme, DefaultProxy, GeographicT
  */
 type MVTImageryProviderOptions = {
   style: any;
-  viewer: Viewer;
   showCanvas?: boolean;
   tileSize?: number;
   tileWidth?: number;
@@ -58,7 +57,6 @@ class MVTImageryProvider {
   sourceFilter: any;
   tilingScheme: WebMercatorTilingScheme | GeographicTilingScheme;
   options: MVTImageryProviderOptions;
-  viewer: Viewer;
 
   /**
    * create a MVTImageryProvider Object
@@ -73,7 +71,6 @@ class MVTImageryProvider {
    */
   constructor(options: MVTImageryProviderOptions) {
     this.options = options;
-    this.viewer = options.viewer;
 
     this.mapboxRenderer = new BasicRenderer({
       style: options.style,

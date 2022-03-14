@@ -98,7 +98,7 @@ export default class CesiumMap {
 
   // 生成ImageryProvider
   protected generateImageProvider(imageLayer: Layer.LayerItem): ImageryProvider {
-    const { method, url, layerName, style, loaderinfo } = imageLayer;
+    const { method, url, layerName, style, loaderinfo, headers } = imageLayer;
     const layers = imageLayer.layers || layerName;
     let imageryProvider = null;
     const tilingScheme4326 = new Cesium.GeographicTilingScheme();
@@ -140,7 +140,8 @@ export default class CesiumMap {
         imageryProvider = new MVTImageryProvider({
           style,
           tilingScheme,
-          maximumLevel: 18
+          maximumLevel: 18,
+          headers
         });
         break;
       default:

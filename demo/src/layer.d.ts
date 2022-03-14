@@ -20,5 +20,6 @@ declare namespace Layer {
       srs?: string; // EPSG: 4326 || EPSG: 3857
     }
     style?: any;
+    headers?: Record<string, any>;
   };
 }
