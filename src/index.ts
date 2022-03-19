@@ -187,6 +187,8 @@ class MVTImageryProvider {
               resolve(img);
               // releaseTile默认为true，对应Cesium请求图像的情形
               this.mapboxRenderer.releaseRender(renderRef);
+              // 释放缓存
+              this.mapboxRenderer.style.sourceCaches?.origin?._tileCache.reset();
             } else {
               // releaseTile为false时在由pickFeature手动调用，在渲染完成之后在pickFeature里边手动释放tile
               resolve(renderRef);
@@ -226,6 +228,7 @@ class MVTImageryProvider {
       // release tile
       renderRef.consumer.ctx = undefined;
       this.mapboxRenderer.releaseRender(renderRef);
+      this.mapboxRenderer.style.sourceCaches?.origin?._tileCache.reset();
       return queryResult;
     });
   }
