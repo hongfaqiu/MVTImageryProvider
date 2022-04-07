@@ -1,5 +1,5 @@
 
-import * as Cesium from "cesium/Cesium";
+import * as Cesium from "cesium";
 // @ts-ignore
 import { BasicRenderer } from "!./mapbox-gl";
 
@@ -26,7 +26,7 @@ type MVTImageryProviderOptions = {
   maximumLevel?: number;
   minimumLevel?: number;
   tileDiscardPolicy?: undefined;
-  credit?: Credit;
+  credit?: string;
   hasAlphaChannel?: boolean;
   sourceFilter?: any;
   headers?: HeadersInit;
@@ -41,7 +41,7 @@ baseCanv.addEventListener('webglcontextlost', () => console.log("webglcontextlos
 baseCanv.width = OFFSCREEN_CANV_SIZE;
 baseCanv.height = OFFSCREEN_CANV_SIZE;
 class MVTImageryProvider {
-  mapboxRenderer: BasicRenderer;
+  mapboxRenderer: any;
   ready: boolean;
   readyPromise: Promise<void>;
   rectangle: any;

@@ -1,6 +1,6 @@
 
-import * as Cesium from "cesium/Cesium";
-import { BasicRenderer } from "pbf-basic-render";
+import * as Cesium from "cesium";
+import { BasicRenderer } from "./mapbox-gl";
 
 import type { Credit, WebMercatorTilingScheme, DefaultProxy, GeographicTilingScheme } from "cesium";
 
@@ -25,7 +25,7 @@ type MVTImageryProviderOptions = {
   maximumLevel?: number;
   minimumLevel?: number;
   tileDiscardPolicy?: undefined;
-  credit?: Credit;
+  credit?: string;
   hasAlphaChannel?: boolean;
   sourceFilter?: any;
   headers?: HeadersInit;
@@ -33,9 +33,14 @@ type MVTImageryProviderOptions = {
 }
 // 创建一个全局变量作为pbfBasicRenderer渲染模板，避免出现16个canvas上下文的浏览器限制，以便Cesium ImageLayer.destory()正常工作。
 // https://github.com/mapbox/mapbox-gl-js/issues/7332
+const OFFSCREEN_CANV_SIZE = 1024;
 const baseCanv = document.createElement('canvas');
+baseCanv.style.imageRendering = 'pixelated';
+baseCanv.addEventListener('webglcontextlost', () => console.log("webglcontextlost"), false);
+baseCanv.width = OFFSCREEN_CANV_SIZE;
+baseCanv.height = OFFSCREEN_CANV_SIZE;
 class MVTImageryProvider {
-  mapboxRenderer: BasicRenderer;
+  mapboxRenderer: any;
   ready: boolean;
   readyPromise: Promise<void>;
   rectangle: any;
@@ -68,7 +73,6 @@ class MVTImageryProvider {
 
     this.mapboxRenderer = new BasicRenderer({
       style: options.style,
-      canvas: baseCanv,
       transformRequest: (url: string) => this.transformRequest(url),
     });
 
@@ -81,7 +85,7 @@ class MVTImageryProvider {
     }
 
     this.ready = false;
-    this.readyPromise = this.mapboxRenderer.style.loadedPromise.then(() => {
+    this.readyPromise = this.mapboxRenderer._style.loadedPromise.then(() => {
       this.ready = true;
     });
 
@@ -187,8 +191,7 @@ class MVTImageryProvider {
               resolve(img);
               // releaseTile默认为true，对应Cesium请求图像的情形
               this.mapboxRenderer.releaseRender(renderRef);
-              // 释放缓存
-              this.mapboxRenderer.style.sourceCaches?.origin?._tileCache.reset();
+              this.mapboxRenderer._style.sourceCaches?.origin?._tileCache.reset();
             } else {
               // releaseTile为false时在由pickFeature手动调用，在渲染完成之后在pickFeature里边手动释放tile
               resolve(renderRef);
@@ -228,7 +231,7 @@ class MVTImageryProvider {
       // release tile
       renderRef.consumer.ctx = undefined;
       this.mapboxRenderer.releaseRender(renderRef);
-      this.mapboxRenderer.style.sourceCaches?.origin?._tileCache.reset();
+      this.mapboxRenderer._style.sourceCaches?.origin?._tileCache.reset();
       return queryResult;
     });
   }

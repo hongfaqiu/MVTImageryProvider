@@ -21,7 +21,7 @@ const BaseConfig: WebpackConfiguration = {
   resolve: {
     extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json'],
     alias: {
-      'cesium': path.resolve(__dirname, cesiumSource),
+      'cesium': path.resolve(__dirname, '../node_modules/cesium'),
     },
     fallback: {
       fs: false

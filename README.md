@@ -15,7 +15,7 @@ yarn add mvt-imagery-provider
 ## Usage
 
 ```ts
-import * as Cesium from "cesium/Cesium";
+import * as Cesium from "cesium";
 import MVTImageryProvider from 'mvt-imagery-provider';
 
 const cesiumViewer = new Cesium.Viewer("cesiumContainer");

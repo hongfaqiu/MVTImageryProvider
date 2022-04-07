@@ -1,9 +1,10 @@
-import 'cesium/Widgets/widgets.css';
-import * as Cesium from 'cesium/Cesium';
+import "cesium/Build/Cesium/Widgets/widgets.css";
+import * as Cesium from 'cesium';
 
 import MVTImageryProvider from './MVTImageryProvider';
 
 import type { ImageryLayer, ImageryProvider, Viewer } from 'cesium';
+import { boundary2Coors, calculateRange, getPbfStyle } from "./chore";
 
 Cesium.Ion.defaultAccessToken =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI4OGQwZTM2MC00NjkzLTRkZTgtYTU5MS0xZTA1NTljYWQyN2UiLCJpZCI6NTUwODUsImlhdCI6MTYyMDM5NjQ3NH0.lu_JBwyngYucPsvbCZt-xzmzgfwEKwcRXiYs5uV8uTM';
@@ -45,10 +46,11 @@ export default class CesiumMap {
     viewer.scene.fog.density = 0.0001; // 雾气中水分含量
     viewer.scene.globe.enableLighting = false;
     viewer.scene.moon.show = false; // 不显示月球
-    // eslint-disable-next-line no-underscore-dangle
+    // @ts-ignore
     viewer._cesiumWidget._creditContainer.style.display = 'none';
     // viewer.scene.globe.depthTestAgainstTerrain = true;
     viewer.scene.skyBox.show = false;
+    // @ts-ignore
     viewer.imageryLayers.remove(viewer.imageryLayers._layers[0]);
     return viewer;
   };
@@ -76,7 +78,7 @@ export default class CesiumMap {
    * @param zoom 是否缩放,默认为false
    * @returns ImageryLayer
    */
-   addRasterLayer(
+  async addRasterLayer(
     imageLayer: Layer.LayerItem,
     options: {
       index?: number;
@@ -86,7 +88,8 @@ export default class CesiumMap {
     if (!imageLayer.url) return null;
     const { viewPort } = imageLayer;
     const { index, zoom } = options;
-    const imageryProvider = this.generateImageProvider(imageLayer);
+    const imageryProvider = await this.generateImageProvider(imageLayer);
+    if (!imageryProvider) return null;
     const layer = this.viewer.imageryLayers.addImageryProvider(imageryProvider, index);
 
     if (zoom) {
@@ -97,10 +100,10 @@ export default class CesiumMap {
   }
 
   // 生成ImageryProvider
-  protected generateImageProvider(imageLayer: Layer.LayerItem): ImageryProvider {
-    const { method, url, layerName, style, loaderinfo, headers } = imageLayer;
-    const layers = imageLayer.layers || layerName;
-    let imageryProvider = null;
+  protected async generateImageProvider(imageLayer: Layer.LayerItem): Promise<ImageryProvider | null> {
+    const { url, method, boundary, layerName, renderOptions, loaderinfo } = imageLayer;
+    const layer = imageLayer.sourceLayer || loaderinfo?.layerName || layerName;
+    let imageryProvider: any = null;
     const tilingScheme4326 = new Cesium.GeographicTilingScheme();
     const tilingScheme3857 = new Cesium.WebMercatorTilingScheme();
     const tilingScheme = (loaderinfo?.srs ?? '').indexOf('4326') !== -1 ? tilingScheme4326 : tilingScheme3857;
@@ -108,11 +111,13 @@ export default class CesiumMap {
       case 'wms':
         imageryProvider = new Cesium.WebMapServiceImageryProvider({
           url,
-          layers,
+          layers: layer,
           tilingScheme,
           parameters: {
+            // service : "WMS",
             format: 'image/png', // 显示声明png格式、透明度，让背景区域透明
             transparent: true,
+            ...renderOptions,
           },
         });
         break;
@@ -137,11 +142,20 @@ export default class CesiumMap {
         });
         break;
       case 'pbf':
+        const style = await getPbfStyle(imageLayer);
         imageryProvider = new MVTImageryProvider({
           style,
           tilingScheme,
           maximumLevel: 18,
-          headers
+        });
+        break;
+      case 'pic':
+        const coors = boundary2Coors(boundary ?? '');
+        if (!coors) return null;
+        const { minLon, minLat, maxLon, maxLat } = calculateRange(coors);
+        imageryProvider = new Cesium.SingleTileImageryProvider({
+          url,
+          rectangle: Cesium.Rectangle.fromDegrees(minLon, minLat, maxLon, maxLat)
         });
         break;
       default:
