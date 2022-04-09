@@ -19,7 +19,7 @@ const BaseConfig: WebpackConfiguration = {
     path: path.resolve(__dirname, '../dist'),
   },
   resolve: {
-    extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json'],
+    extensions: ['.mjs', '.js', '.ts', '.json'],
     alias: {
       'cesium': path.resolve(__dirname, '../node_modules/cesium'),
     },
@@ -71,7 +71,7 @@ const BaseConfig: WebpackConfiguration = {
     }),
   ],
   optimization: {
-    minimize: true,
+    minimize: false,
     splitChunks: {
       chunks: 'all',
       minSize: 20000,

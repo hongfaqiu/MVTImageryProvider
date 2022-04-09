@@ -1,6 +1,6 @@
 
 import * as Cesium from "cesium";
-import { BasicRenderer } from "./mapbox-gl";
+const mapbox = require('./mapbox-gl');
 
 import type { Credit, WebMercatorTilingScheme, DefaultProxy, GeographicTilingScheme } from "cesium";
 
@@ -71,7 +71,7 @@ class MVTImageryProvider {
   constructor(options: MVTImageryProviderOptions) {
     this.options = options;
 
-    this.mapboxRenderer = new BasicRenderer({
+    this.mapboxRenderer = new mapbox.BasicRenderer({
       style: options.style,
       transformRequest: (url: string) => this.transformRequest(url),
     });
