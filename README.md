@@ -2,6 +2,8 @@
 
 Render Mapbox style in CesiumJs. This project is very simple, because the complex rendering task is compeleted by mapbox-gl-js, you should also check [pbf-basic-render](https://github.com/hongfaqiu/pbf-basic-render) for more detail.
 
+![](https://img.shields.io/bundlephobia/minzip/mvt-imagery-provider) <a href="https://www.npmjs.com/package/mvt-imagery-provider">![](https://img.shields.io/npm/v/mvt-imagery-provider)</a>
+
 ## Install
 
 ```js
