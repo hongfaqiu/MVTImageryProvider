@@ -1,12 +1,10 @@
+import { ArcGisMapServerImageryProvider, Cartesian3, GeographicTilingScheme, ImageryLayer, ImageryProvider, Ion, Resource, UrlTemplateImageryProvider, Viewer, WebMapServiceImageryProvider, WebMapTileServiceImageryProvider, WebMercatorTilingScheme } from 'cesium';
 import "cesium/Build/Cesium/Widgets/widgets.css";
-import * as Cesium from 'cesium';
 
+import { getPbfStyle } from "./chore";
 import MVTImageryProvider from './MVTImageryProvider';
 
-import type { ImageryLayer, ImageryProvider, Viewer } from 'cesium';
-import { boundary2Coors, calculateRange, getPbfStyle } from "./chore";
-
-Cesium.Ion.defaultAccessToken =
+Ion.defaultAccessToken =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI4OGQwZTM2MC00NjkzLTRkZTgtYTU5MS0xZTA1NTljYWQyN2UiLCJpZCI6NTUwODUsImlhdCI6MTYyMDM5NjQ3NH0.lu_JBwyngYucPsvbCZt-xzmzgfwEKwcRXiYs5uV8uTM';
 
 /**
@@ -26,7 +24,7 @@ export default class CesiumMap {
    * @param cesiumContainer 地图容器div id
    */
   protected initMap = (cesiumContainer: string) => {
-    const viewer = new Cesium.Viewer(cesiumContainer, {
+    const viewer = new Viewer(cesiumContainer, {
       baseLayerPicker: false, // 图层选择器
       animation: false, // 左下角仪表
       fullscreenButton: false, // 全屏按钮
@@ -48,7 +46,6 @@ export default class CesiumMap {
     viewer.scene.moon.show = false; // 不显示月球
     // @ts-ignore
     viewer._cesiumWidget._creditContainer.style.display = 'none';
-    // viewer.scene.globe.depthTestAgainstTerrain = true;
     viewer.scene.skyBox.show = false;
     // @ts-ignore
     viewer.imageryLayers.remove(viewer.imageryLayers._layers[0]);
@@ -63,7 +60,7 @@ export default class CesiumMap {
   zoomToViewPort(viewPort: number[] | undefined) {
     if (viewPort) {
       this.viewer.camera.flyTo({
-        destination: Cesium.Cartesian3.fromDegrees(viewPort[0], viewPort[1], viewPort[2]),
+        destination: Cartesian3.fromDegrees(viewPort[0], viewPort[1], viewPort[2]),
         duration: 1,
       });
       return true;
@@ -71,11 +68,22 @@ export default class CesiumMap {
     return false;
   }
 
+  protected getResource(options: {
+    url: string;
+    headers?: any;
+    queryParameters?: any;
+  }) {
+    return new Resource({
+      ...options,
+      retryAttempts: 1,
+    });
+  }
 
   /**
    * 添加栅格图层
-   * @param imageLayer 栅格图层参数
-   * @param zoom 是否缩放,默认为false
+   * @param {Layer.LayerItem} imageLayer 栅格图层参数
+   * @param {number} [options.index] the index to add the layer at. If omitted, the layer will added on top of all existing layers.
+   * @param {boolean} [options.zoom] 是否缩放,默认为false
    * @returns ImageryLayer
    */
   async addRasterLayer(
@@ -99,46 +107,66 @@ export default class CesiumMap {
     return layer;
   }
 
-  // 生成ImageryProvider
+  /**
+   * generate ImageProvider Object
+   * @param {Layer.LayerItem} imageLayer 
+   * @returns {Promise<ImageryProvider | null>} ImageProvider
+   */
   protected async generateImageProvider(imageLayer: Layer.LayerItem): Promise<ImageryProvider | null> {
-    const { url, method, boundary, layerName, renderOptions, loaderinfo } = imageLayer;
-    const layer = imageLayer.sourceLayer || loaderinfo?.layerName || layerName;
-    let imageryProvider: any = null;
-    const tilingScheme4326 = new Cesium.GeographicTilingScheme();
-    const tilingScheme3857 = new Cesium.WebMercatorTilingScheme();
+    const { url: OriginUrl, method, layerName, headers, queryParameters } = imageLayer;
+    const { loaderinfo = {} } = imageLayer as Layer.RasterLayerItem;
+    const { minimumLevel = 1, maximumLevel = 18 } = loaderinfo;
+
+    const layer = imageLayer.sourceLayer || layerName;
+    const tilingScheme4326 = new GeographicTilingScheme();
+    const tilingScheme3857 = new WebMercatorTilingScheme();
     const tilingScheme = (loaderinfo?.srs ?? '').indexOf('4326') !== -1 ? tilingScheme4326 : tilingScheme3857;
+
+    const url: any = typeof OriginUrl === 'string' ? this.getResource({
+      url: OriginUrl,
+      headers,
+      queryParameters
+    }) : OriginUrl;
+
+    let imageryProvider: any = null;
+
     switch (method) {
       case 'wms':
-        imageryProvider = new Cesium.WebMapServiceImageryProvider({
+        const { queryParameters } = imageLayer;
+        imageryProvider = new WebMapServiceImageryProvider({
           url,
           layers: layer,
           tilingScheme,
+          minimumLevel,
+          maximumLevel,
           parameters: {
-            // service : "WMS",
-            format: 'image/png', // 显示声明png格式、透明度，让背景区域透明
             transparent: true,
-            ...renderOptions,
+            ...queryParameters,
           },
         });
         break;
       case 'wmts':
-        imageryProvider = new Cesium.WebMapTileServiceImageryProvider({
+        imageryProvider = new WebMapTileServiceImageryProvider({
           url,
-          layer: '',
+          layer,
           style: '',
           tileMatrixSetID: '',
+          minimumLevel,
+          maximumLevel,
         });
         break;
       case 'arcgis':
-        imageryProvider = new Cesium.ArcGisMapServerImageryProvider({
+        imageryProvider = new ArcGisMapServerImageryProvider({
           url,
+          maximumLevel,
         });
         break;
       case 'tms':
-        imageryProvider = new Cesium.UrlTemplateImageryProvider({
+        imageryProvider = new UrlTemplateImageryProvider({
           url,
           tilingScheme,
-          maximumLevel: 18,
+          minimumLevel,
+          maximumLevel,
         });
         break;
       case 'pbf':
@@ -146,16 +174,8 @@ export default class CesiumMap {
         imageryProvider = new MVTImageryProvider({
           style,
           tilingScheme,
-          maximumLevel: 18,
-        });
-        break;
-      case 'pic':
-        const coors = boundary2Coors(boundary ?? '');
-        if (!coors) return null;
-        const { minLon, minLat, maxLon, maxLat } = calculateRange(coors);
-        imageryProvider = new Cesium.SingleTileImageryProvider({
-          url,
-          rectangle: Cesium.Rectangle.fromDegrees(minLon, minLat, maxLon, maxLat)
+          maximumLevel,
+          minimumLevel
         });
         break;
       default:
@@ -164,7 +184,11 @@ export default class CesiumMap {
     return imageryProvider;
   }
 
-  // 移除对应图层
+  /**
+   * remove ImageLayer
+   * @param {ImageryLayer} layer ImageryLayer Object
+   * @returns {boolean} true if the layer was in the collection and was removed, false if the layer was not in the collection.
+   */
   removeImageLayer(layer: ImageryLayer) {
     return this.viewer.imageryLayers.remove(layer, true);
   }

@@ -4,8 +4,8 @@ import CesiumMap from './utils/map';
 const MapObj = new CesiumMap('app')
 
 MapObj.addRasterLayer({
-  layerName: 'ESRI全球底图',
-  id: '底图-ESRI全球底图',
+  layerName: 'esri-global',
+  id: 'esri-global',
   method: 'arcgis',
   url: 'https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer',
 })
