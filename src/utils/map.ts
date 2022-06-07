@@ -1,7 +1,6 @@
 import { ArcGisMapServerImageryProvider, Cartesian3, GeographicTilingScheme, ImageryLayer, ImageryProvider, Ion, Resource, UrlTemplateImageryProvider, Viewer, WebMapServiceImageryProvider, WebMapTileServiceImageryProvider, WebMercatorTilingScheme } from 'cesium';
 import "cesium/Build/Cesium/Widgets/widgets.css";
 
-import { getPbfStyle } from "./chore";
 import MVTImageryProvider from './MVTImageryProvider';
 
 Ion.defaultAccessToken =
@@ -38,6 +37,7 @@ export default class CesiumMap {
       shouldAnimate: true,
       requestRenderMode: true,
       maximumRenderTimeChange: Infinity, // 静止时不刷新,减少系统消耗
+      useBrowserRecommendedResolution: false,
     });
 
     // viewer.scene.globe.enableLighting = true;
@@ -170,9 +170,8 @@ export default class CesiumMap {
         });
         break;
       case 'pbf':
-        const style = await getPbfStyle(imageLayer);
         imageryProvider = new MVTImageryProvider({
-          style,
+          style: url,
           tilingScheme,
           maximumLevel,
           minimumLevel

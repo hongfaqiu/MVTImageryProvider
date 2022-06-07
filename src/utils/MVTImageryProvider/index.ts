@@ -1,20 +1,19 @@
 
-import { Credit, WebMercatorTilingScheme, DefaultProxy, GeographicTilingScheme, ImageryLayer, Math as CMath, Cartographic,  } from "cesium";
+import { Credit, WebMercatorTilingScheme, DefaultProxy, GeographicTilingScheme, ImageryLayer, Math as CMath, Cartographic, Resource,  } from "cesium";
+import { StyleSpecification } from "./typings.d";
 const mapbox = require('./mapbox-gl');
 
-type MVTImageryProviderOptions = {
-  style: any;
+export type MVTImageryProviderOptions = {
+  style: Resource | StyleSpecification;
   showCanvas?: boolean;
   tileSize?: number;
   tileWidth?: number;
   tileHeight?: number;
   maximumLevel?: number;
   minimumLevel?: number;
-  tileDiscardPolicy?: undefined;
   credit?: string;
   hasAlphaChannel?: boolean;
   sourceFilter?: any;
-  headers?: HeadersInit;
   tilingScheme?: WebMercatorTilingScheme | GeographicTilingScheme;
 }
 
@@ -43,11 +42,12 @@ class MVTImageryProvider {
   sourceFilter: any;
   tilingScheme: WebMercatorTilingScheme | GeographicTilingScheme;
   private _destroyed = false;
+  style: StyleSpecification | undefined;
 
   /**
    * create a MVTImageryProvider Object
    * @param {MVTImageryProviderOptions} options MVTImageryProvider options
-   * @param {Object} options.style - mapbox style object
+   * @param {Resource | StyleSpecification} options.style - mapbox style object or url
    * @param {Function} options.sourceFilter - sourceFilter is used to filter which source participate in pickFeature process.
    * @param {Number} options.maximumLevel - if cesium zoom level exceeds maximumLevel, layer will be invisible.
    * @param {Number} options.minimumLevel - if cesium zoom level belows minimumLevel, layer will be invisible.
@@ -88,23 +88,7 @@ class MVTImageryProvider {
    */
   constructor(options: MVTImageryProviderOptions) {
 
-    this.mapboxRenderer = new mapbox.BasicRenderer({
-      style: options.style,
-    });
-
-    this.mapboxRenderer._canvas = baseCanv;
-    this.mapboxRenderer._canvas.addEventListener('webglcontextrestored', () => this.mapboxRenderer._createGlContext(), false);
-    this.mapboxRenderer._createGlContext();
-
-    if (options.showCanvas) {
-      this.mapboxRenderer.showCanvasForDebug();
-    }
-
     this.ready = false;
-    this.readyPromise = this.mapboxRenderer._style.loadedPromise.then(() => {
-      this.ready = true;
-    });
-
     this.tilingScheme = options.tilingScheme ?? new WebMercatorTilingScheme();;
     this.rectangle = this.tilingScheme.rectangle;
     this.tileSize = this.tileWidth = this.tileHeight = options.tileSize || 512;
@@ -116,10 +100,34 @@ class MVTImageryProvider {
     this.proxy = new DefaultProxy("");
     this.hasAlphaChannel = options.hasAlphaChannel ?? true;
     this.sourceFilter = options.sourceFilter;
+
+    this.readyPromise = this._getStyleObj(options.style).then(style => {
+      this.style = style
+      this.mapboxRenderer = new mapbox.BasicRenderer({
+        style,
+      })
+      this.mapboxRenderer._canvas = baseCanv;
+      this.mapboxRenderer._canvas.addEventListener('webglcontextrestored', () => this.mapboxRenderer._createGlContext(), false);
+      this.mapboxRenderer._createGlContext();
+
+      if (options.showCanvas) {
+        this.mapboxRenderer.showCanvasForDebug();
+      }
+      this.ready = true
+    })
   }
+
 
   get isDestroyed() {
     return this._destroyed
+  }
+
+  private async _getStyleObj(url: Resource | StyleSpecification): Promise<StyleSpecification> {
+    if (url instanceof Resource) {
+      const pbfStyle = await url.fetchJson()
+      return pbfStyle
+    }
+    return url
   }
 
   createTile() {
@@ -245,6 +253,7 @@ class MVTImageryProvider {
         });
       });
 
+      console.log(queryResult)
       // release tile
       renderRef.consumer.ctx = undefined;
       this.mapboxRenderer.releaseRender(renderRef);

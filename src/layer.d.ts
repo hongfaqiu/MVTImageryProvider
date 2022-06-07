@@ -10,10 +10,7 @@ declare namespace Layer {
     headers?: Record<string, any>; // 请求头
     queryParameters?: Record<string, any>; // 可以传自定义url参数，如token等
     sourceLayer?: string; // 真实图层名，wms加载方式需要此字段
-    boundary?: string; // 地图边界，例：
-                       // POLYGON((-167.1072 32.0969,-167.1072 69.834,-104.1519 69.834,-104.1519 32.0969,-167.1072 32.0969))
-    viewPort?: number[]; // 地图缩放的范围，如果没有viewPort，从boundary中计算
-                         // 默认为[110.60396458865515, 34.54408834959379, 15000000]
+    viewPort?: number[]; // 地图缩放的范围，默认为[110.60396458865515, 34.54408834959379, 15000000]
     loaderinfo?: LoaderInfo;
    }
 
@@ -35,8 +32,8 @@ declare namespace Layer {
    */
   type PbfLayerItem = {
     method: 'pbf';
-    pbfStyle?: any; // pbf style
-  } & BasicLayer;
+    url: string | Object;
+  } & Omit<BasicLayer, 'url'>;
 
   type LayerItem = RasterLayerItem | PbfLayerItem;
 

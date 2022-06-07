@@ -15,8 +15,8 @@ MapObj.addRasterLayer({
   layerName: 'pbf',
   id: 'pbf',
   method: 'pbf',
-  url: 'https://vstyles.mapplus.cn/v1.0/styles/bj_500_dz/style.json',
-  viewPort: [116.3, 39.9, 1000000]
+  url: 'https://demotiles.maplibre.org/style.json',
+  viewPort: [116.3, 39.9, 15000000]
 }, {
   zoom: true
 })
