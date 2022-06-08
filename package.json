@@ -1,15 +1,15 @@
 {
   "name": "mvt-imagery-provider",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "A Mapbox style renderer for CesiumJS",
+  "source": "src/utils/MVTImageryProvider/index.ts",
   "main": "./lib/index.js",
   "module": "./lib/index.module.js",
   "exports": "./lib/index.modern.js",
-  "source": "src/utils/MVTImageryProvider/index.ts",
   "types": "lib/index.d.ts",
   "scripts": {
     "build": "webpack --mode=production",
-    "build:lib": "microbundle src/utils/MVTImageryProvider/*.{js,ts} --tsconfig=tsconfig.microbundle.json",
+    "build:lib": "microbundle --tsconfig=tsconfig.microbundle.json",
     "start": "webpack-dev-server --mode=development",
     "prepublish": "npm run build:lib",
     "test": "echo \"Error: no test specified\" && exit 1"

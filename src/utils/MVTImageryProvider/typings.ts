@@ -1,3 +1,40 @@
+import { GeographicTilingScheme, Resource, WebMercatorTilingScheme } from "cesium";
+
+export declare type MVTImageryProviderOptions = {
+  style: Resource | StyleSpecification;
+  /**
+   * A `RequestParameters` object to be returned from Map.options.transformRequest callbacks.
+   * @return {Object} RequestParameters
+   * @property {string} url The URL to be requested.
+   * @property {Object} headers The headers to be sent with the request.
+   * @property {string} method Request method `'GET' | 'POST' | 'PUT'`.
+   * @property {string} body Request body.
+   * @property {string} type Response body type to be returned `'string' | 'json' | 'arrayBuffer'`.
+   * @property {string} credentials `'same-origin'|'include'` Use 'include' to send cookies with cross-origin requests.
+   * @property {boolean} collectResourceTiming If true, Resource Timing API information will be collected for these transformed requests and returned in a resourceTiming property of relevant data events.
+   * @example
+   * // use transformRequest to modify requests that begin with `http://myHost`
+   * transformRequest: function(url, resourceType) {
+   *  if (resourceType === 'Source' && url.indexOf('http://myHost') > -1) {
+   *    return {
+   *      url: url.replace('http', 'https'),
+   *      headers: { 'my-custom-header': true },
+   *      credentials: 'include'  // Include cookies for cross-origin requests
+   *    }
+   *   }
+   *  }
+   */
+  transformRequest?: RequestTransformFunction;
+  showCanvas?: boolean;
+  tileSize?: number;
+  maximumLevel?: number;
+  minimumLevel?: number;
+  credit?: string;
+  hasAlphaChannel?: boolean;
+  sourceFilter?: any;
+  tilingScheme?: WebMercatorTilingScheme | GeographicTilingScheme;
+}
+
 export declare type ColorSpecification = string;
 export declare type FormattedSpecification = string;
 export declare type ResolvedImageSpecification = string;
@@ -604,3 +641,27 @@ export declare type BackgroundLayerSpecification = {
 	};
 };
 export declare type LayerSpecification = FillLayerSpecification | LineLayerSpecification | SymbolLayerSpecification | CircleLayerSpecification | HeatmapLayerSpecification | FillExtrusionLayerSpecification | RasterLayerSpecification | HillshadeLayerSpecification | BackgroundLayerSpecification;
+
+export interface IResourceType {
+  Unknown: keyof this;
+  Style: keyof this;
+  Source: keyof this;
+  Tile: keyof this;
+  Glyphs: keyof this;
+  SpriteImage: keyof this;
+  SpriteJSON: keyof this;
+  Image: keyof this;
+}
+type ResourceTypeEnum = keyof IResourceType;
+
+export type RequestTransformFunction = (url: string, resourceType?: ResourceTypeEnum) => RequestParameters;
+
+export type RequestParameters = {
+  url: string;
+  headers?: any;
+  method?: 'GET' | 'POST' | 'PUT';
+  body?: string;
+  type?: 'string' | 'json' | 'arrayBuffer';
+  credentials?: 'same-origin' | 'include';
+  collectResourceTiming?: boolean;
+};
