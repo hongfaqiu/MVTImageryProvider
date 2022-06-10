@@ -7,7 +7,20 @@
   <title>MVTImageryProvider</title>
 </head>
 <body>
-  <div id="app"></div>
+  <div id="app">
+    <div class="btns-container">
+      <button class="btn tool" id="remove">
+        Remove
+      </button>
+
+      <button class="btn tool" id="reload1">
+        Reload pbf example1
+      </button>
+      <button class="btn tool" id="reload2">
+        Reload pbf example2
+      </button>
+    </div>
+  </div>
 </body>
 
 <style>
@@ -20,6 +33,54 @@
   #app{
     height: 100%;
     width: 100%;
+    position: absolute;
+  }
+  .btns-container {
+    position: absolute;
+    left: 100px;
+    top: 30px;
+    display: flex;
+    z-index: 1;
+    width: 200px;
+    justify-content: space-between;
+  }
+  .tool {
+    margin: 0 10px;
+  }
+  .btn {
+    line-height: 1.5715;
+    position: relative;
+    display: inline-block;
+    font-weight: 400;
+    white-space: nowrap;
+    text-align: center;
+    background-image: none;
+    border: 1px solid transparent;
+    box-shadow: 0 2px 0 rgb(0 0 0 / 2%);
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    touch-action: manipulation;
+    height: 32px;
+    padding: 4px 15px;
+    font-size: 14px;
+    border-radius: 2px;
+    color: #fff;
+    border-color: #FC4C02;
+    background: #FC4C02;
+  }
+  .btn:hover, .btn:focus {
+    color: #fff;
+    border-color: #ff722b;
+    background: #ff722b;
+  }
+  .btn:active {
+    color: #fff;
+    border-color: #d63900;
+    background: #d63900;
   }
 </style>
 </html>

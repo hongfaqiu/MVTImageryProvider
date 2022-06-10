@@ -184,6 +184,30 @@ export default class CesiumMap {
   }
 
   /**
+   * 重载栅格图层
+   * @param layerObj 栅格图层对象
+   * @param layer 新的栅格图层元数据
+   */
+  reLoadImageLayer = async (
+    layerObj: ImageryLayer,
+    layer: Layer.LayerItem,
+    index: number | undefined = undefined,
+  ) => {
+    if (layerObj && !layerObj.isDestroyed()) {
+      const objIndex = this.viewer.imageryLayers.indexOf(layerObj);
+      const bool = this.viewer.imageryLayers.remove(layerObj, true);
+      if (bool) {
+        const newImageryLayer = await this.addRasterLayer(layer, { index: objIndex < 0 ? index : objIndex });
+        if (newImageryLayer) return newImageryLayer;
+      } else {
+        const newImageryLayer = await this.addRasterLayer(layer, { index });
+        if (newImageryLayer) return newImageryLayer;
+      }
+    }
+    return layerObj;
+  }
+
+  /**
    * remove ImageLayer
    * @param {ImageryLayer} layer ImageryLayer Object
    * @returns {boolean} true if the layer was in the collection and was removed, false if the layer was not in the collection.

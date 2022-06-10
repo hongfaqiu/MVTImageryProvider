@@ -1,7 +1,7 @@
 
 import { Credit, WebMercatorTilingScheme, DefaultProxy, GeographicTilingScheme, ImageryLayer, Math as CMath, Cartographic, Resource,  } from "cesium";
-import * as mapbox from 'mvt-basic-render'
 import { MVTImageryProviderOptions, StyleSpecification } from "./typings";
+import * as mapbox from 'mvt-basic-render'
 
 // 创建一个全局变量作为pbfBasicRenderer渲染模板，避免出现16个canvas上下文的浏览器限制，以便Cesium ImageLayer.destory()正常工作。
 // https://github.com/mapbox/mapbox-gl-js/issues/7332
@@ -84,6 +84,10 @@ class MVTImageryProvider {
     this.hasAlphaChannel = options.hasAlphaChannel ?? true;
     this.sourceFilter = options.sourceFilter;
 
+    if (options.showCanvas) {
+      this.mapboxRenderer.showCanvasForDebug();
+    }
+
     this.readyPromise = this._getStyleObj(options.style).then(style => {
       this.style = style
       this.mapboxRenderer = new mapbox.BasicRenderer({
@@ -95,8 +99,14 @@ class MVTImageryProvider {
       if (options.showCanvas) {
         this.mapboxRenderer.showCanvasForDebug();
       }
-      this.ready = true
+      
+      return this.mapboxRenderer
+    }).then(renderObj => {
+      renderObj._style.loadedPromise.then(() => {
+        this.ready = true
+      });
     })
+    
   }
 
   get isDestroyed() {
@@ -250,7 +260,6 @@ class MVTImageryProvider {
   destroy() {
     this.mapboxRenderer._cancelAllPendingRenders();
     this._resetTileCache();
-    this.mapboxRenderer._gl.getExtension('WEBGL_lose_context').loseContext();
     this._destroyed = true;
   }
 }
