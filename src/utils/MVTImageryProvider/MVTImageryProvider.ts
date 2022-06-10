@@ -1,7 +1,7 @@
 
 import { Credit, WebMercatorTilingScheme, DefaultProxy, GeographicTilingScheme, ImageryLayer, Math as CMath, Cartographic, Resource,  } from "cesium";
+import * as mapbox from 'mvt-basic-render'
 import { MVTImageryProviderOptions, StyleSpecification } from "./typings";
-import * as mapbox from './mapbox-gl'
 
 // 创建一个全局变量作为pbfBasicRenderer渲染模板，避免出现16个canvas上下文的浏览器限制，以便Cesium ImageLayer.destory()正常工作。
 // https://github.com/mapbox/mapbox-gl-js/issues/7332
@@ -28,7 +28,7 @@ class MVTImageryProvider {
   /**
    * create a MVTImageryProvider Object
    * @param {MVTImageryProviderOptions} options MVTImageryProvider options as follow:
-   * @param {Resource | StyleSpecification} options.style - mapbox style object or url Resource.
+   * @param {Resource | string | StyleSpecification} options.style - mapbox style object or url Resource.
    * @param {RequestTransformFunction} options.transformRequest - use transformRequest to modify tile requests.
    * @param {Number} [options.tileSize = 512] - can be 256 or 512. defaults to 512. 
    * @param {Number} [options.maximumLevel = 18] - if cesium zoom level exceeds maximumLevel, layer will be invisible, defaults to 18.
@@ -103,12 +103,16 @@ class MVTImageryProvider {
     return this._destroyed
   }
 
-  private async _getStyleObj(url: Resource | StyleSpecification): Promise<StyleSpecification> {
-    if (url instanceof Resource) {
-      const pbfStyle = await url.fetchJson()
+  private async _getStyleObj(url: string | Resource | StyleSpecification): Promise<StyleSpecification> {
+    let styleObj = url
+    if (typeof styleObj === 'string') {
+      styleObj = new Resource(styleObj)  
+    }
+    if (styleObj instanceof Resource) {
+      const pbfStyle = await styleObj.fetchJson()
       return pbfStyle
     }
-    return url
+    return styleObj
   }
 
   private _createTile() {

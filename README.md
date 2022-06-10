@@ -36,7 +36,7 @@ class MVTImageryProvider {
   /**
    * create a MVTImageryProvider Object
    * @param {MVTImageryProviderOptions} options MVTImageryProvider options as follow:
-   * @param {Resource | StyleSpecification} options.style - mapbox style object or url Resource.
+   * @param {string | Resource | StyleSpecification} options.style - mapbox style object or url Resource.
    * @param {RequestTransformFunction} options.transformRequest - use transformRequest to modify tile requests.
    * @param {Number} [options.tileSize = 512] - can be 256 or 512. defaults to 512.
    * @param {Number} [options.maximumLevel = 18] - if cesium zoom level exceeds maximumLevel, layer will be invisible, defaults to 18.
@@ -62,7 +62,7 @@ class MVTImageryProvider {
 }
 
 type MVTImageryProviderOptions = {
-  style: Resource | StyleSpecification;
+  style: string | Resource | StyleSpecification;
   /**
    * A `RequestParameters` object to be returned from Map.options.transformRequest callbacks.
    * @return {Object} RequestParameters
@@ -96,6 +96,10 @@ type MVTImageryProviderOptions = {
   tilingScheme?: WebMercatorTilingScheme | GeographicTilingScheme;
 };
 ```
+
+## StyleSpecification
+
+Reference to the [Mapbox Style Specification](https://docs.mapbox.com/mapbox-gl-js/style-spec/root/)
 
 ## Demo
 

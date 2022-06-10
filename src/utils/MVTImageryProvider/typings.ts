@@ -1,7 +1,7 @@
 import { GeographicTilingScheme, Resource, WebMercatorTilingScheme } from "cesium";
 
 export declare type MVTImageryProviderOptions = {
-  style: Resource | StyleSpecification;
+  style: string | Resource | StyleSpecification;
   /**
    * A `RequestParameters` object to be returned from Map.options.transformRequest callbacks.
    * @return {Object} RequestParameters
