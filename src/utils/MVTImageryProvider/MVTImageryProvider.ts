@@ -1,5 +1,5 @@
 
-import { Credit, WebMercatorTilingScheme, DefaultProxy, GeographicTilingScheme, ImageryLayer, Math as CMath, Cartographic, Resource,  } from "cesium";
+import { Credit, Event, WebMercatorTilingScheme, DefaultProxy, GeographicTilingScheme, ImageryLayer, Math as CMath, Cartographic, Resource,  } from "cesium";
 import { MVTImageryProviderOptions, StyleSpecification } from "./typings";
 import * as mapbox from 'mvt-basic-render'
 
@@ -23,7 +23,8 @@ class MVTImageryProvider {
   sourceFilter: any;
   tilingScheme: WebMercatorTilingScheme | GeographicTilingScheme;
   private _destroyed = false;
-  style: StyleSpecification | undefined;
+  private _error: Event
+  private _style: StyleSpecification | undefined;
 
   /**
    * create a MVTImageryProvider Object
@@ -79,6 +80,7 @@ class MVTImageryProvider {
     this.maximumLevel = options.maximumLevel ?? 18;
     this.minimumLevel = options.minimumLevel ?? 0;
     this.tileDiscardPolicy = undefined;
+    this._error = new Event();
     this.credit = new Credit(options.credit || "", false);
     this.proxy = new DefaultProxy("");
     this.hasAlphaChannel = options.hasAlphaChannel ?? true;
@@ -88,8 +90,8 @@ class MVTImageryProvider {
       this.mapboxRenderer.showCanvasForDebug();
     }
 
-    this.readyPromise = this._getStyleObj(options.style).then(style => {
-      this.style = style
+    this.readyPromise = this._preLoad(options.style).then(style => {
+      this._style = style
       this.mapboxRenderer = new mapbox.BasicRenderer({
         style,
         canvas: baseCanv,
@@ -106,23 +108,41 @@ class MVTImageryProvider {
         this.ready = true
       });
     })
-    
+  }
+
+  /**
+   * get mapbox style json obj
+   */
+  get style() {
+    return this._style
   }
 
   get isDestroyed() {
     return this._destroyed
   }
 
-  private async _getStyleObj(url: string | Resource | StyleSpecification): Promise<StyleSpecification> {
-    let styleObj = url
-    if (typeof styleObj === 'string') {
-      styleObj = new Resource(styleObj)  
+  /**
+   * Gets an event that will be raised if an error is encountered during processing.
+   * @memberof GeoJsonDataSource.prototype
+   * @type {Event}
+   */
+   get errorEvent() {
+    return this._error
+   }
+  
+  private _preLoad(data: string | Resource | StyleSpecification): Promise<StyleSpecification> {
+    let promise: any = data
+    if (typeof data === 'string') {
+      data = new Resource({ url: data }) 
     }
-    if (styleObj instanceof Resource) {
-      const pbfStyle = await styleObj.fetchJson()
-      return pbfStyle
+    if (data instanceof Resource) {
+      promise = data.fetchJson()
     }
-    return styleObj
+    return Promise.resolve(promise)
+      .catch( error => {
+        this._error.raiseEvent(error);
+        throw error;
+      });
   }
 
   private _createTile() {

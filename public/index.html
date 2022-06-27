@@ -9,14 +9,14 @@
 <body>
   <div id="app">
     <div class="btns-container">
-      <button class="btn tool" id="remove">
+      <button class="tool" id="remove">
         Remove
       </button>
 
-      <button class="btn tool" id="reload1">
+      <button class="tool" id="reload1">
         Reload pbf example1
       </button>
-      <button class="btn tool" id="reload2">
+      <button class="tool" id="reload2">
         Reload pbf example2
       </button>
     </div>
@@ -47,7 +47,7 @@
   .tool {
     margin: 0 10px;
   }
-  .btn {
+  button {
     line-height: 1.5715;
     position: relative;
     display: inline-block;
@@ -72,12 +72,12 @@
     border-color: #FC4C02;
     background: #FC4C02;
   }
-  .btn:hover, .btn:focus {
+  button:hover, button:focus {
     color: #fff;
     border-color: #ff722b;
     background: #ff722b;
   }
-  .btn:active {
+  button:active {
     color: #fff;
     border-color: #d63900;
     background: #d63900;
