@@ -37,6 +37,7 @@ class MVTImageryProvider {
    * create a MVTImageryProvider Object
    * @param {MVTImageryProviderOptions} options MVTImageryProvider options as follow:
    * @param {string | Resource | StyleSpecification} options.style - mapbox style object or url Resource.
+   * @param {string} options.accessToken - mapbox style accessToken.
    * @param {RequestTransformFunction} options.transformRequest - use transformRequest to modify tile requests.
    * @param {Number} [options.tileSize = 512] - can be 256 or 512. defaults to 512.
    * @param {Number} [options.maximumLevel = 18] - if cesium zoom level exceeds maximumLevel, layer will be invisible, defaults to 18.
@@ -63,6 +64,8 @@ class MVTImageryProvider {
 
 type MVTImageryProviderOptions = {
   style: string | Resource | StyleSpecification;
+  /** accessToken needed if mapbox style not public */
+  accessToken?: string;
   /**
    * A `RequestParameters` object to be returned from Map.options.transformRequest callbacks.
    * @return {Object} RequestParameters

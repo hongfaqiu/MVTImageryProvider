@@ -33,6 +33,7 @@ declare namespace Layer {
   type PbfLayerItem = {
     method: 'pbf';
     url: string | Object;
+    token?: string;
   } & Omit<BasicLayer, 'url'>;
 
   type LayerItem = RasterLayerItem | PbfLayerItem;

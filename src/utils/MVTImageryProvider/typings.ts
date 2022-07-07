@@ -2,6 +2,9 @@ import { GeographicTilingScheme, Resource, WebMercatorTilingScheme } from "cesiu
 
 export declare type MVTImageryProviderOptions = {
   style: string | Resource | StyleSpecification;
+  /** accessToken needed if mapbox style not public */
+  accessToken?: string;
+  /** forceHTTPS defaults false */
   /**
    * A `RequestParameters` object to be returned from Map.options.transformRequest callbacks.
    * @return {Object} RequestParameters
@@ -652,7 +655,7 @@ export interface IResourceType {
   SpriteJSON: keyof this;
   Image: keyof this;
 }
-type ResourceTypeEnum = keyof IResourceType;
+export type ResourceTypeEnum = keyof IResourceType;
 
 export type RequestTransformFunction = (url: string, resourceType?: ResourceTypeEnum) => RequestParameters;
 

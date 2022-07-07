@@ -25,7 +25,7 @@ class MVTImageryProvider {
   private _destroyed = false;
   private _error: Event
   private _style: StyleSpecification | undefined;
-
+  private _accessToken: string | undefined;
   /**
    * create a MVTImageryProvider Object
    * @param {MVTImageryProviderOptions} options MVTImageryProvider options as follow:
@@ -85,6 +85,7 @@ class MVTImageryProvider {
     this.proxy = new DefaultProxy("");
     this.hasAlphaChannel = options.hasAlphaChannel ?? true;
     this.sourceFilter = options.sourceFilter;
+    this._accessToken = options.accessToken;
 
     if (options.showCanvas) {
       this.mapboxRenderer.showCanvasForDebug();
@@ -95,6 +96,7 @@ class MVTImageryProvider {
       this.mapboxRenderer = new mapbox.BasicRenderer({
         style,
         canvas: baseCanv,
+        token: this._accessToken,
         transformRequest: options.transformRequest
       })
 
@@ -126,16 +128,28 @@ class MVTImageryProvider {
    * @memberof GeoJsonDataSource.prototype
    * @type {Event}
    */
-   get errorEvent() {
-    return this._error
-   }
+  get errorEvent() {
+  return this._error
+  }
   
   private _preLoad(data: string | Resource | StyleSpecification): Promise<StyleSpecification> {
     let promise: any = data
     if (typeof data === 'string') {
-      data = new Resource({ url: data }) 
+      
+      data = new Resource({
+        url: data,
+        queryParameters: {
+          access_token: this._accessToken
+        }
+      }) 
     }
     if (data instanceof Resource) {
+      const prefix = "https://api.mapbox.com/";
+      if (data.url.startsWith("mapbox://"))
+        data.url = data.url.replace("mapbox://", prefix);
+      data.appendQueryParameters({
+        access_token: this._accessToken
+      })
       promise = data.fetchJson()
     }
     return Promise.resolve(promise)
@@ -268,7 +282,6 @@ class MVTImageryProvider {
         });
       });
 
-      console.log(queryResult)
       // release tile
       renderRef.consumer.ctx = undefined;
       this.mapboxRenderer.releaseRender(renderRef);

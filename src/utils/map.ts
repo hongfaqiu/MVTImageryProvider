@@ -174,7 +174,8 @@ export default class CesiumMap {
           style: url,
           tilingScheme,
           maximumLevel,
-          minimumLevel
+          minimumLevel,
+          accessToken: imageLayer.token
         });
         break;
       default:
