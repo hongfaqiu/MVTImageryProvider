@@ -171,29 +171,20 @@ class MVTImageryProvider {
     Object.values(this.mapboxRenderer._style.sourceCaches).forEach((cache: any) => cache._tileCache.reset());
   }
 
-  /**
-   * Dealing with tile boundary conditions
-   * @param num tile coord num, x or y
-   * @param level tile level
-   * @returns real boundary num
-   */
-  private _handleTileCoord(num: number, level: number) {
-    const maxTile = (1 << level) - 1
-    let newNum = num
-    if (newNum < 0) newNum = maxTile
-    if (newNum > maxTile) newNum = 0
-    return newNum
-  }
-
   private _getTilesSpec(coord: Coords, source: string) {
     const { x, y, level } = coord
     const TILE_SIZE = this.tileSize
     // 3x3 grid of source tiles, where the region of interest is that corresponding to the central source tile
     let ret = [];
+    const maxTile = (1 << level) - 1
     for (let xx = -1; xx <= 1; xx++) {
-      const newx = this._handleTileCoord(x + xx, level)
+      let newx = x + xx
+      if (newx < 0) newx = maxTile
+      if (newx > maxTile) newx = 0
       for (let yy = -1; yy <= 1; yy++) {
-        const newy = this._handleTileCoord(y + yy, level)
+        let newy = y + yy
+        if (newy < 0) continue
+        if (newy > maxTile) continue
         ret.push({
           source: source,
           z: level,
@@ -238,24 +229,20 @@ class MVTImageryProvider {
         async (err: any) => {
           if (!!err) {
             switch (err) {
-              case "canceled":
-              case "fully-canceled":
+              case "canceled": case "fully-canceled":
                 reject(undefined);
-                break;
-              default:
-                reject(undefined);
+                return;
             }
+          }
+          if (releaseTile) {
+            renderRef.consumer.ctx = null;
+            resolve(canv);
+            // releaseTile默认为true，对应Cesium请求图像的情形
+            this.mapboxRenderer.releaseRender(renderRef);
+            this._resetTileCache();
           } else {
-            if (releaseTile) {
-              renderRef.consumer.ctx = null;
-              resolve(canv);
-              // releaseTile默认为true，对应Cesium请求图像的情形
-              this.mapboxRenderer.releaseRender(renderRef);
-              this._resetTileCache();
-            } else {
-              // releaseTile为false时在由pickFeature手动调用，在渲染完成之后在pickFeature里边手动释放tile
-              resolve(renderRef);
-            }
+            // releaseTile为false时在由pickFeature手动调用，在渲染完成之后在pickFeature里边手动释放tile
+            resolve(renderRef);
           }
         }
       );
@@ -285,8 +272,6 @@ class MVTImageryProvider {
           }),
         });
       });
-
-      console.log(queryResult)
 
       // release tile
       renderRef.consumer.ctx = undefined;
