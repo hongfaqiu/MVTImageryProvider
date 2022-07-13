@@ -1,6 +1,6 @@
 {
   "name": "mvt-imagery-provider",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "A Mapbox style renderer for CesiumJS",
   "source": "src/utils/MVTImageryProvider/index.ts",
   "main": "./lib/index.js",
@@ -28,7 +28,7 @@
     "cesium": "*"
   },
   "dependencies": {
-    "mvt-basic-render": "^0.1.0"
+    "mvt-basic-render": "^0.1.1"
   },
   "devDependencies": {
     "@babel/core": "^7.18.2",
@@ -46,7 +46,6 @@
     "copy-webpack-plugin": "^10.2.4",
     "css-loader": "^6.7.1",
     "html-webpack-plugin": "^5.5.0",
-    "maplibre-gl": "^2.1.9",
     "microbundle": "^0.14.2",
     "style-loader": "^3.3.1",
     "ts-node": "^10.8.1",

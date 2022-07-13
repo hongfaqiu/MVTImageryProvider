@@ -1,4 +1,4 @@
-import { ArcGisMapServerImageryProvider, Cartesian3, GeographicTilingScheme, ImageryLayer, ImageryProvider, Ion, Resource, UrlTemplateImageryProvider, Viewer, WebMapServiceImageryProvider, WebMapTileServiceImageryProvider, WebMercatorTilingScheme } from 'cesium';
+import { ArcGisMapServerImageryProvider, Cartesian3, GeographicTilingScheme, ImageryLayer, ImageryProvider, Ion, Resource, TileCoordinatesImageryProvider, UrlTemplateImageryProvider, Viewer, WebMapServiceImageryProvider, WebMapTileServiceImageryProvider, WebMercatorTilingScheme } from 'cesium';
 import "cesium/Build/Cesium/Widgets/widgets.css";
 
 import MVTImageryProvider from './MVTImageryProvider';
@@ -30,7 +30,6 @@ export default class CesiumMap {
       geocoder: false, // 右上角查询搜索
       infoBox: false, // 信息框
       homeButton: false, // home按钮
-      sceneModePicker: false, // 3d 2d选择器
       selectionIndicator: false, //
       timeline: false, // 时间轴
       navigationHelpButton: false, // 右上角帮助按钮
@@ -49,6 +48,7 @@ export default class CesiumMap {
     viewer.scene.skyBox.show = false;
     // @ts-ignore
     viewer.imageryLayers.remove(viewer.imageryLayers._layers[0]);
+
     return viewer;
   };
 
@@ -109,7 +109,7 @@ export default class CesiumMap {
 
   /**
    * generate ImageProvider Object
-   * @param {Layer.LayerItem} imageLayer 
+   * @param {Layer.LayerItem} imageLayer
    * @returns {Promise<ImageryProvider | null>} ImageProvider
    */
   protected async generateImageProvider(imageLayer: Layer.LayerItem): Promise<ImageryProvider | null> {
@@ -175,7 +175,7 @@ export default class CesiumMap {
           tilingScheme,
           maximumLevel,
           minimumLevel,
-          accessToken: imageLayer.token
+          accessToken: imageLayer.token,
         });
         break;
       default:

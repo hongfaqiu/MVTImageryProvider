@@ -1,6 +1,6 @@
 
-import { Credit, Event, WebMercatorTilingScheme, DefaultProxy, GeographicTilingScheme, ImageryLayer, Math as CMath, Cartographic, Resource,  } from "cesium";
-import { MVTImageryProviderOptions, StyleSpecification } from "./typings";
+import { Credit, Event, WebMercatorTilingScheme, DefaultProxy, GeographicTilingScheme, Math as CMath, Resource,  } from "cesium";
+import { Coords, ImageryFeatureInfo, MVTImageryProviderOptions, StyleSpecification } from "./typings";
 import * as mapbox from 'mvt-basic-render'
 
 // 创建一个全局变量作为pbfBasicRenderer渲染模板，避免出现16个canvas上下文的浏览器限制，以便Cesium ImageLayer.destory()正常工作。
@@ -31,7 +31,7 @@ class MVTImageryProvider {
    * @param {MVTImageryProviderOptions} options MVTImageryProvider options as follow:
    * @param {Resource | string | StyleSpecification} options.style - mapbox style object or url Resource.
    * @param {RequestTransformFunction} options.transformRequest - use transformRequest to modify tile requests.
-   * @param {Number} [options.tileSize = 512] - can be 256 or 512. defaults to 512. 
+   * @param {Number} [options.tileSize = 512] - can be 256 or 512. defaults to 512.
    * @param {Number} [options.maximumLevel = 18] - if cesium zoom level exceeds maximumLevel, layer will be invisible, defaults to 18.
    * @param {Number} [options.minimumLevel = 0] - if cesium zoom level belows minimumLevel, layer will be invisible, defaults to 0.
    * @param {Boolean} [options.showCanvas = false] - if show canvas for debug.
@@ -76,7 +76,7 @@ class MVTImageryProvider {
     this.ready = false;
     this.tilingScheme = options.tilingScheme ?? new WebMercatorTilingScheme();;
     this.rectangle = this.tilingScheme.rectangle;
-    this.tileSize = this.tileWidth = this.tileHeight = options.tileSize || 512;
+    this.tileSize = this.tileWidth = this.tileHeight = options.tileSize || 256;
     this.maximumLevel = options.maximumLevel ?? 18;
     this.minimumLevel = options.minimumLevel ?? 0;
     this.tileDiscardPolicy = undefined;
@@ -87,9 +87,6 @@ class MVTImageryProvider {
     this.sourceFilter = options.sourceFilter;
     this._accessToken = options.accessToken;
 
-    if (options.showCanvas) {
-      this.mapboxRenderer.showCanvasForDebug();
-    }
 
     this.readyPromise = this._preLoad(options.style).then(style => {
       this._style = style
@@ -103,7 +100,7 @@ class MVTImageryProvider {
       if (options.showCanvas) {
         this.mapboxRenderer.showCanvasForDebug();
       }
-      
+
       return this.mapboxRenderer
     }).then(renderObj => {
       renderObj._style.loadedPromise.then(() => {
@@ -131,17 +128,17 @@ class MVTImageryProvider {
   get errorEvent() {
   return this._error
   }
-  
+
   private _preLoad(data: string | Resource | StyleSpecification): Promise<StyleSpecification> {
     let promise: any = data
     if (typeof data === 'string') {
-      
+
       data = new Resource({
         url: data,
         queryParameters: {
           access_token: this._accessToken
         }
-      }) 
+      })
     }
     if (data instanceof Resource) {
       const prefix = "https://api.mapbox.com/";
@@ -164,22 +161,7 @@ class MVTImageryProvider {
     canv.width = this.tileSize;
     canv.height = this.tileSize;
     canv.style.imageRendering = "pixelated";
-    const ctx = canv.getContext("2d");
-    if (ctx) {
-      ctx.globalCompositeOperation = "copy";
-    }
     return canv;
-  }
-
-  private async _canvasToImage(canvas: HTMLCanvasElement): Promise<HTMLImageElement> {
-    const img = new Image();
-    return new Promise((resolve) => {
-      img.onload = function () {
-        resolve(img);
-      };
-      img.crossOrigin = "";
-      img.src = canvas.toDataURL("image/png");
-    });
   }
 
   /**
@@ -189,34 +171,61 @@ class MVTImageryProvider {
     Object.values(this.mapboxRenderer._style.sourceCaches).forEach((cache: any) => cache._tileCache.reset());
   }
 
+  /**
+   * Dealing with tile boundary conditions
+   * @param num tile coord num, x or y
+   * @param level tile level
+   * @returns real boundary num
+   */
+  private _handleTileCoord(num: number, level: number) {
+    const maxTile = (1 << level) - 1
+    let newNum = num
+    if (newNum < 0) newNum = maxTile
+    if (newNum > maxTile) newNum = 0
+    return newNum
+  }
+
+  private _getTilesSpec(coord: Coords, source: string) {
+    const { x, y, level } = coord
+    const TILE_SIZE = this.tileSize
+    // 3x3 grid of source tiles, where the region of interest is that corresponding to the central source tile
+    let ret = [];
+    for (let xx = -1; xx <= 1; xx++) {
+      const newx = this._handleTileCoord(x + xx, level)
+      for (let yy = -1; yy <= 1; yy++) {
+        const newy = this._handleTileCoord(y + yy, level)
+        ret.push({
+          source: source,
+          z: level,
+          x: newx,
+          y: newy,
+          left: 0 + xx * TILE_SIZE,
+          top: 0 + yy * TILE_SIZE,
+          size: TILE_SIZE
+        });
+      }
+    }
+    return ret;
+  }
+
   requestImage(
     x: number,
     y: number,
-    zoom: number,
+    level: number,
     releaseTile = true
   ): Promise<HTMLImageElement | HTMLCanvasElement | any> | undefined {
-    if (zoom > this.maximumLevel || zoom < this.minimumLevel) {
-      return Promise.reject(undefined);
-    }
 
-    this.mapboxRenderer.filterForZoom(zoom);
-    const tilesSpec: { source: string; z: number; x: number; y: number; left: number; top: number; size: number; }[] = [];
-    this.mapboxRenderer.getVisibleSources(zoom).forEach((s: any) => {
-      tilesSpec.push({
-        source: s,
-        z: zoom,
-        x: x,
-        y: y,
-        left: 0,
-        top: 0,
-        size: this.tileSize,
-      });
-    });
+    this.mapboxRenderer.filterForZoom(level);
+    const tilesSpec = this.mapboxRenderer
+      .getVisibleSources(level)
+      .reduce((a: any[], s: string) => a.concat(this._getTilesSpec({ x, y, level }, s)), [])
 
     return new Promise((resolve, reject) => {
-      const canv = this._createTile();
+      const canv = this._createTile()
+      const ctx = canv.getContext("2d")
+      if(ctx) ctx.globalCompositeOperation = 'copy'
       const renderRef = this.mapboxRenderer.renderTiles(
-        canv.getContext("2d"),
+        ctx,
         {
           srcLeft: 0,
           srcTop: 0,
@@ -239,8 +248,7 @@ class MVTImageryProvider {
           } else {
             if (releaseTile) {
               renderRef.consumer.ctx = null;
-              const img = await this._canvasToImage(canv);
-              resolve(img);
+              resolve(canv);
               // releaseTile默认为true，对应Cesium请求图像的情形
               this.mapboxRenderer.releaseRender(renderRef);
               this._resetTileCache();
@@ -261,11 +269,7 @@ class MVTImageryProvider {
         ? this.sourceFilter(targetSources)
         : targetSources;
 
-      const queryResult: {
-        data: Object;
-        iamgeryLayer?: ImageryLayer | undefined;
-        position?: Cartographic | undefined;
-      }[] = [];
+      const queryResult: ImageryFeatureInfo[] = [];
 
       const lng = CMath.toDegrees(longitude);
       const lat = CMath.toDegrees(latitude);
@@ -282,6 +286,8 @@ class MVTImageryProvider {
         });
       });
 
+      console.log(queryResult)
+
       // release tile
       renderRef.consumer.ctx = undefined;
       this.mapboxRenderer.releaseRender(renderRef);
@@ -289,7 +295,7 @@ class MVTImageryProvider {
       return queryResult;
     });
   }
-  
+
   destroy() {
     this.mapboxRenderer._cancelAllPendingRenders();
     this._resetTileCache();

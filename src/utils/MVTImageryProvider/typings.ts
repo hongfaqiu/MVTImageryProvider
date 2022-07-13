@@ -1,4 +1,9 @@
-import { GeographicTilingScheme, Resource, WebMercatorTilingScheme } from "cesium";
+import { Cartographic, GeographicTilingScheme, ImageryLayer, Resource, WebMercatorTilingScheme } from "cesium";
+export interface Coords {
+  x: number;
+  y: number;
+  level: number;
+}
 
 export declare type MVTImageryProviderOptions = {
   style: string | Resource | StyleSpecification;
@@ -36,6 +41,12 @@ export declare type MVTImageryProviderOptions = {
   hasAlphaChannel?: boolean;
   sourceFilter?: any;
   tilingScheme?: WebMercatorTilingScheme | GeographicTilingScheme;
+}
+
+export type ImageryFeatureInfo = {
+  data: Object;
+  imageryLayer?: ImageryLayer;
+  position?: Cartographic;
 }
 
 export declare type ColorSpecification = string;
