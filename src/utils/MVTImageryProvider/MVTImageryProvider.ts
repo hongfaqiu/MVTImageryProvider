@@ -30,8 +30,9 @@ class MVTImageryProvider {
    * create a MVTImageryProvider Object
    * @param {MVTImageryProviderOptions} options MVTImageryProvider options as follow:
    * @param {Resource | string | StyleSpecification} options.style - mapbox style object or url Resource.
+   * @param {string} options.accessToken - mapbox style accessToken.
    * @param {RequestTransformFunction} options.transformRequest - use transformRequest to modify tile requests.
-   * @param {Number} [options.tileSize = 512] - can be 256 or 512. defaults to 512.
+   * @param {Number} [options.tileSize = 256] - can be 256 or 512. defaults to 256.
    * @param {Number} [options.maximumLevel = 18] - if cesium zoom level exceeds maximumLevel, layer will be invisible, defaults to 18.
    * @param {Number} [options.minimumLevel = 0] - if cesium zoom level belows minimumLevel, layer will be invisible, defaults to 0.
    * @param {Boolean} [options.showCanvas = false] - if show canvas for debug.
@@ -40,35 +41,7 @@ class MVTImageryProvider {
    * @param {Credit} options.credit - A credit contains data pertaining to how to display attributions/credits for certain content on the screen.
    * @example
    * const imageryProvider = new MVTImageryProvider({
-        style: {
-          version: 8,
-          sources: {
-            layer1: {
-              type: "vector",
-              tiles: ['https://api.mapbox.com/v4/mapbox.82pkq93d/{z}/{x}/{y}.vector.pbf?sku=1012RMlsjWj1O&access_token=pk.eyJ1IjoiZXhhbXBsZXMiLCJhIjoiY2p0MG01MXRqMW45cjQzb2R6b2ptc3J4MSJ9.zA2W0IkI0c6KaAhJfk9bWg'],
-            },
-          },
-          layers: [
-            {
-              id: "background",
-              type: "background",
-              paint: {
-                "background-color": "transparent",
-              },
-            },
-            {
-              id: "polygon",
-              source: "layer1",
-              "source-layer": "original",
-              type: "fill",
-              paint: {
-                "fill-color": "#00ffff",
-                'fill-outline-color': 'rgba(0,0,0,0.1)',
-              }
-            }
-          ],
-        },
-      }
+        style: 'https://demotiles.maplibre.org/style.json'
       });
    */
   constructor(options: MVTImageryProviderOptions) {
@@ -132,7 +105,6 @@ class MVTImageryProvider {
   private _preLoad(data: string | Resource | StyleSpecification): Promise<StyleSpecification> {
     let promise: any = data
     if (typeof data === 'string') {
-
       data = new Resource({
         url: data,
         queryParameters: {
