@@ -1,4 +1,5 @@
 import { ImageryLayer } from 'cesium';
+import { mapStyle, SETTINGS } from './mapstyle';
 import CesiumMap from './utils/map';
 
 
@@ -10,11 +11,11 @@ const BaseMap: Layer.LayerItem = {
 }
 
 const PbfExample1: Layer.LayerItem = {
-  layerName: 'pbf',
-  id: 'pbf',
+  id: 'macrostrat',
+  layerName: 'macrostrat',
+  url: mapStyle,
+  token: SETTINGS.mapboxAccessToken,
   method: 'pbf',
-  url: 'https://demotiles.maplibre.org/style.json',
-  viewPort: [116.3, 39.9, 15000000]
 }
 
 const PbfExample2: Layer.LayerItem = {

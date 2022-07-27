@@ -63,13 +63,6 @@ class MVTImageryProvider {
    * @type {Event}
    */
   get errorEvent(): Event<(...args: any[]) => void>;
-  private _preLoad;
-  private _createTile;
-  /**
-   * reset tile cache
-   */
-  private _resetTileCache;
-  private _getTilesSpec;
   requestImage(x: number, y: number, level: number, releaseTile?: boolean): Promise<HTMLImageElement | HTMLCanvasElement | any> | undefined;
   pickFeatures(x: number, y: number, zoom: number, longitude: number, latitude: number): Promise<ImageryFeatureInfo[]>;
   destroy(): void;
