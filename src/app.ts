@@ -1,5 +1,4 @@
 import { ImageryLayer } from 'cesium';
-import { mapStyle, SETTINGS } from './mapstyle';
 import CesiumMap from './utils/map';
 
 
@@ -11,11 +10,11 @@ const BaseMap: Layer.LayerItem = {
 }
 
 const PbfExample1: Layer.LayerItem = {
-  id: 'macrostrat',
-  layerName: 'macrostrat',
-  url: mapStyle,
-  token: SETTINGS.mapboxAccessToken,
+  layerName: 'pbf',
+  id: 'pbf',
   method: 'pbf',
+  url: 'https://demotiles.maplibre.org/style.json',
+  viewPort: [116.3, 39.9, 15000000]
 }
 
 const PbfExample2: Layer.LayerItem = {
@@ -60,7 +59,7 @@ const removeBtn = document.getElementById('remove')
 if (removeBtn) {
   removeBtn.onclick = () => {
     if (imageryLayer) {
-      if(MapObj.removeImageLayer(imageryLayer)) imageryLayer = null
+      if (MapObj.removeImageLayer(imageryLayer)) imageryLayer = null
     }
   }
 }

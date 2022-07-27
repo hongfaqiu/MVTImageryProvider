@@ -41,12 +41,8 @@ export declare type MVTImageryProviderOptions = {
   hasAlphaChannel?: boolean;
   sourceFilter?: any;
   tilingScheme?: WebMercatorTilingScheme | GeographicTilingScheme;
-}
-
-export type ImageryFeatureInfo = {
-  data: Object;
-  imageryLayer?: ImageryLayer;
-  position?: Cartographic;
+  /** enable pickFeatures or not, defaults to true */
+  enablePickFeatures?: boolean
 }
 
 export declare type ColorSpecification = string;

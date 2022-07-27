@@ -1,6 +1,6 @@
 
-import { Credit, Event, WebMercatorTilingScheme, DefaultProxy, GeographicTilingScheme, Math as CMath, Resource,  } from "cesium";
-import { Coords, ImageryFeatureInfo, MVTImageryProviderOptions, StyleSpecification } from "./typings";
+import { Credit, Event, WebMercatorTilingScheme, DefaultProxy, GeographicTilingScheme, Math as CMath, Resource, ImageryLayerFeatureInfo,  } from "cesium";
+import { Coords, MVTImageryProviderOptions, StyleSpecification } from "./typings";
 import * as mapbox from 'mvt-basic-render'
 
 // 创建一个全局变量作为pbfBasicRenderer渲染模板，避免出现16个canvas上下文的浏览器限制，以便Cesium ImageLayer.destory()正常工作。
@@ -26,6 +26,7 @@ class MVTImageryProvider {
   private _error: Event
   private _style: StyleSpecification | undefined;
   private _accessToken: string | undefined;
+  private _enablePickFeatures: boolean | undefined;
   /**
    * create a MVTImageryProvider Object
    * @param {MVTImageryProviderOptions} options MVTImageryProvider options as follow:
@@ -59,7 +60,7 @@ class MVTImageryProvider {
     this.hasAlphaChannel = options.hasAlphaChannel ?? true;
     this.sourceFilter = options.sourceFilter;
     this._accessToken = options.accessToken;
-
+    this._enablePickFeatures = options.enablePickFeatures ?? true
 
     this.readyPromise = this._preLoad(options.style).then(style => {
       this._style = style
@@ -221,28 +222,34 @@ class MVTImageryProvider {
     });
   }
 
-  pickFeatures(x: number, y: number, zoom: number, longitude: number, latitude: number){
+  pickFeatures(x: number, y: number, zoom: number, longitude: number, latitude: number) {
+    if(!this._enablePickFeatures) return undefined
+
     return this.requestImage(x, y, zoom, false)?.then((renderRef) => {
       let targetSources = this.mapboxRenderer.getVisibleSources(zoom);
       targetSources = this.sourceFilter
         ? this.sourceFilter(targetSources)
         : targetSources;
 
-      const queryResult: ImageryFeatureInfo[] = [];
+      const queryResult: ImageryLayerFeatureInfo[] = [];
 
       const lng = CMath.toDegrees(longitude);
       const lat = CMath.toDegrees(latitude);
 
       targetSources.forEach((s: any) => {
-        queryResult.push({
-          data: this.mapboxRenderer.queryRenderedFeatures({
-            source: s,
-            renderedZoom: zoom,
-            lng,
-            lat,
-            tileZ: zoom,
-          }),
-        });
+        const featureInfo = new ImageryLayerFeatureInfo()
+        featureInfo.data = this.mapboxRenderer.queryRenderedFeatures({
+          source: s,
+          renderedZoom: zoom,
+          lng,
+          lat,
+          tileZ: zoom,
+        })
+        const name = Object.keys(featureInfo.data)[0]
+        featureInfo.name = name
+        const properties: Record<string, any>[] = featureInfo.data[name]
+        featureInfo.configureDescriptionFromProperties(properties.length === 1 ? properties[0] : properties)
+        queryResult.push(featureInfo);
       });
 
       // release tile
