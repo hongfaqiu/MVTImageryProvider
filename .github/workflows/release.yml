@@ -23,7 +23,7 @@ jobs:
         uses: pnpm/action-setup@v2
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install
         
       - name: Release
         env:

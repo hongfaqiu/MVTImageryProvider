@@ -1,6 +1,7 @@
 {
   "name": "mvt-imagery-provider",
   "version": "0.5.3",
+  "packageManager": "pnpm@6.30.1",
   "description": "A Mapbox style renderer for CesiumJS",
   "source": "src/utils/MVTImageryProvider/index.ts",
   "main": "./lib/index.js",
