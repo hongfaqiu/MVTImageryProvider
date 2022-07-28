@@ -123,7 +123,7 @@ yarn
 npm start
 ```
 
-| [![bguCSe.png](https://s1.ax1x.com/2022/03/08/bguCSe.png)](https://imgtu.com/i/bguCSe) | [![bguQyj.png](https://s1.ax1x.com/2022/03/08/bguQyj.png)](https://imgtu.com/i/bguQyj) |
+| ![bguCSe.png](https://s1.ax1x.com/2022/07/28/vCk4z9.png) | ![macrostrat.png](https://s1.ax1x.com/2022/07/28/vCkcZV.png) |
 | ------- | ------- |
 
 ## Credit
