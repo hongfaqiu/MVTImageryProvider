@@ -37,6 +37,7 @@ class MVTImageryProvider {
    * @param {Number} [options.maximumLevel = 18] - if cesium zoom level exceeds maximumLevel, layer will be invisible, defaults to 18.
    * @param {Number} [options.minimumLevel = 0] - if cesium zoom level belows minimumLevel, layer will be invisible, defaults to 0.
    * @param {Boolean} [options.showCanvas = false] - if show canvas for debug.
+   * @param {Boolean} [options.enablePickFeatures = true] - enable pickFeatures or not, defaults to true.
    * @param {Function} options.sourceFilter - sourceFilter is used to filter which source participate in pickFeature process.
    * @param {WebMercatorTilingScheme | GeographicTilingScheme} [options.tilingScheme = WebMercatorTilingScheme] - Cesium tilingScheme, defaults to WebMercatorTilingScheme(EPSG: 3857).
    * @param {Credit} options.credit - A credit contains data pertaining to how to display attributions/credits for certain content on the screen.
