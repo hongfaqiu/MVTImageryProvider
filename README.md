@@ -23,6 +23,7 @@ const cesiumViewer = new Cesium.Viewer("cesiumContainer");
 
 const provider = new MVTImageryProvider({
   style: 'https://demotiles.maplibre.org/style.json',
+  accessToken: MAPBOX_TOKEN
 });
 
 cesiumViewer.imageryLayers.addImageryProvider(provider);
@@ -110,7 +111,7 @@ type MVTImageryProviderOptions = {
 
 ## StyleSpecification
 
-Reference to the [Mapbox Style Specification](https://docs.mapbox.com/mapbox-gl-js/style-spec/root/)
+Reference to the [Mapbox Style Specification](https://docs.mapbox.com/mapbox-gl-js/style-spec/root/), the mapbox-gl version is 0.43.0
 
 ## Demo
 

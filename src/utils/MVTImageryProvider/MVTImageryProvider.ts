@@ -118,9 +118,10 @@ class MVTImageryProvider {
       const prefix = "https://api.mapbox.com/";
       if (data.url.startsWith("mapbox://"))
         data.url = data.url.replace("mapbox://", prefix);
-      data.appendQueryParameters({
-        access_token: this._accessToken
-      })
+      if(this._accessToken)
+        data.appendQueryParameters({
+          access_token: this._accessToken
+        })
       promise = data.fetchJson()
     }
     return Promise.resolve(promise)
@@ -149,7 +150,8 @@ class MVTImageryProvider {
     const { x, y, level } = coord
     const TILE_SIZE = this.tileSize
     // 3x3 grid of source tiles, where the region of interest is that corresponding to the central source tile
-    let ret = [];
+    const ret = []
+    // cesium tile request's coords preview: https://s1.ax1x.com/2022/08/02/vEmnzt.jpg
     const maxTile = (1 << level) - 1
     for (let xx = -1; xx <= 1; xx++) {
       let newx = x + xx
@@ -179,6 +181,7 @@ class MVTImageryProvider {
     level: number,
     releaseTile = true
   ): Promise<HTMLImageElement | HTMLCanvasElement | any> | undefined {
+    if(level < this.minimumLevel || level > this.maximumLevel) return undefined
 
     this.mapboxRenderer.filterForZoom(level);
     const tilesSpec = this.mapboxRenderer
@@ -200,15 +203,14 @@ class MVTImageryProvider {
           destTop: 0,
         },
         tilesSpec,
-        async (err: any) => {
-          if (!!err) {
-            switch (err) {
-              case "canceled": case "fully-canceled":
-                reject(undefined);
-                return;
-            }
-          }
-          if (releaseTile) {
+        (err: any) => {
+          /**
+           * In case of err ends with 'tiles not available', the canvas will still be painted.
+           * relate url: https://github.com/landtechnologies/Mapbox-vector-tiles-basic-js-renderer/blob/master/src/basic/renderer.js#L341-L405
+           */
+          if (typeof err === 'string' && !err.endsWith('tiles not available')) {
+            reject(undefined);
+          } else if (releaseTile) {
             renderRef.consumer.ctx = null;
             resolve(canv);
             // releaseTile默认为true，对应Cesium请求图像的情形
