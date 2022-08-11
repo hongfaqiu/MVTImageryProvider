@@ -1,3 +1,10 @@
+# [0.7.0](https://github.com/hongfaqiu/MVTImageryProvider/compare/v0.6.2...v0.7.0) (2022-08-11)
+
+
+### Features
+
+* support EPSG4326 ([9536d0d](https://github.com/hongfaqiu/MVTImageryProvider/commit/9536d0d23178e3f2816f854995b4a2cbc81879a4))
+
 ## [0.6.2](https://github.com/hongfaqiu/MVTImageryProvider/compare/v0.6.1...v0.6.2) (2022-08-02)
 
 
