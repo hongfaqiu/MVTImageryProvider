@@ -2,7 +2,6 @@ import { ImageryLayer } from 'cesium';
 import { mapStyle, SETTINGS } from './mapstyle';
 import CesiumMap from './utils/map';
 
-
 const BaseMap: Layer.LayerItem = {
   layerName: 'esri-global',
   id: 'esri-global',

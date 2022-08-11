@@ -1,4 +1,4 @@
-import { ArcGisMapServerImageryProvider, Cartesian3, GeographicTilingScheme, ImageryLayer, ImageryProvider, Ion, Resource, TileCoordinatesImageryProvider, UrlTemplateImageryProvider, Viewer, WebMapServiceImageryProvider, WebMapTileServiceImageryProvider, WebMercatorTilingScheme } from 'cesium';
+import { ArcGisMapServerImageryProvider, Cartesian3, GeographicTilingScheme, ImageryLayer, ImageryProvider, Ion, Resource, UrlTemplateImageryProvider, Viewer, WebMapServiceImageryProvider, WebMapTileServiceImageryProvider, WebMercatorTilingScheme } from 'cesium';
 import "cesium/Build/Cesium/Widgets/widgets.css";
 
 import MVTImageryProvider from './MVTImageryProvider';

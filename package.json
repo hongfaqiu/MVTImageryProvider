@@ -29,7 +29,7 @@
     "cesium": "*"
   },
   "dependencies": {
-    "mvt-basic-render": "^0.1.1"
+    "mvt-basic-render": "^0.2.2"
   },
   "devDependencies": {
     "@babel/core": "^7.18.2",

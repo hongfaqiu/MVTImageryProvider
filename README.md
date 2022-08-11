@@ -120,7 +120,7 @@ Reference to the [Mapbox Style Specification](https://docs.mapbox.com/mapbox-gl-
 Launch the app in the demo folder, and then visit http://localhost:8080/
 
 ```node
-yarn
+pnpm install
 npm start
 ```
 

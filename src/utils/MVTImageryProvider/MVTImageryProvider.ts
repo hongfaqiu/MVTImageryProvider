@@ -152,17 +152,17 @@ class MVTImageryProvider {
     // 3x3 grid of source tiles, where the region of interest is that corresponding to the central source tile
     const ret = []
     // cesium tile request's coords preview: https://s1.ax1x.com/2022/08/02/vEmnzt.jpg
-    const maxTile = (1 << level) - 1
+    const maxX = this.tilingScheme.getNumberOfXTilesAtLevel(level) - 1
+    const maxY = this.tilingScheme.getNumberOfYTilesAtLevel(level) - 1
     for (let xx = -1; xx <= 1; xx++) {
       let newx = x + xx
-      if (newx < 0) newx = maxTile
-      if (newx > maxTile) newx = 0
+      if (newx < 0) newx = maxX
+      if (newx > maxX) newx = 0
       for (let yy = -1; yy <= 1; yy++) {
         let newy = y + yy
-        if (newy < 0) continue
-        if (newy > maxTile) continue
+        if (newy < 0 || newy > maxY) continue
         ret.push({
-          source: source,
+          source,
           z: level,
           x: newx,
           y: newy,
