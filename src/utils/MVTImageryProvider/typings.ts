@@ -1,4 +1,4 @@
-import { Cartographic, GeographicTilingScheme, ImageryLayer, Resource, WebMercatorTilingScheme } from "cesium";
+import { GeographicTilingScheme, Resource, WebMercatorTilingScheme } from "cesium";
 export interface Coords {
   x: number;
   y: number;

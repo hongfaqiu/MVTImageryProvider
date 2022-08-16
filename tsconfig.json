@@ -14,8 +14,6 @@
     "suppressImplicitAnyIndexErrors": true,
     "noUnusedLocals": true,
     "allowJs": true,
-    "skipLibCheck": true,
-    "strict": true,
     "esModuleInterop": true,
   },
   "ts-node": {

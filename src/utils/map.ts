@@ -30,7 +30,6 @@ export default class CesiumMap {
       geocoder: false, // 右上角查询搜索
       // infoBox: false, // 信息框
       homeButton: false, // home按钮
-      selectionIndicator: false, //
       timeline: false, // 时间轴
       navigationHelpButton: false, // 右上角帮助按钮
       shouldAnimate: true,
@@ -115,7 +114,7 @@ export default class CesiumMap {
   protected async generateImageProvider(imageLayer: Layer.LayerItem): Promise<ImageryProvider | null> {
     const { url: OriginUrl, method, layerName, headers, queryParameters } = imageLayer;
     const { loaderinfo = {} } = imageLayer as Layer.RasterLayerItem;
-    const { minimumLevel = 1, maximumLevel = 18 } = loaderinfo;
+    const { minimumLevel, maximumLevel } = loaderinfo;
 
     const layer = imageLayer.sourceLayer || layerName;
     const tilingScheme4326 = new GeographicTilingScheme();
@@ -159,6 +158,7 @@ export default class CesiumMap {
         imageryProvider = new ArcGisMapServerImageryProvider({
           url,
           maximumLevel,
+          enablePickFeatures: false
         });
         break;
       case 'tms':
