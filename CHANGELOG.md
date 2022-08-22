@@ -1,3 +1,10 @@
+## [0.7.1](https://github.com/hongfaqiu/MVTImageryProvider/compare/v0.7.0...v0.7.1) (2022-08-22)
+
+
+### Bug Fixes
+
+* fix pickFeatures when no features found ([5bad25c](https://github.com/hongfaqiu/MVTImageryProvider/commit/5bad25ce4430cd81fe577283b38326c0b4114deb))
+
 # [0.7.0](https://github.com/hongfaqiu/MVTImageryProvider/compare/v0.6.2...v0.7.0) (2022-08-11)
 
 
