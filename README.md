@@ -59,12 +59,6 @@ class MVTImageryProvider {
    */
   get style(): StyleSpecification;
   get isDestroyed(): boolean;
-  /**
-   * Gets an event that will be raised if an error is encountered during processing.
-   * @memberof GeoJsonDataSource.prototype
-   * @type {Event}
-   */
-  get errorEvent(): Event<(...args: any[]) => void>;
   requestImage(x: number, y: number, level: number, releaseTile?: boolean): Promise<HTMLImageElement | HTMLCanvasElement | any> | undefined;
   pickFeatures(x: number, y: number, zoom: number, longitude: number, latitude: number): Promise<ImageryLayerFeatureInfo[]> | undefined;
   destroy(): void;

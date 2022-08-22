@@ -251,15 +251,17 @@ class MVTImageryProvider {
         const name = Object.keys(featureInfo.data)[0]
         featureInfo.name = name
         const properties: Record<string, any>[] = featureInfo.data[name]
-        featureInfo.configureDescriptionFromProperties(properties.length === 1 ? properties[0] : properties)
-        queryResult.push(featureInfo);
+        if (properties) {
+          featureInfo.configureDescriptionFromProperties(properties?.length === 1 ? properties[0] : properties)
+          queryResult.push(featureInfo);
+        }
       });
 
       // release tile
       renderRef.consumer.ctx = undefined;
       this.mapboxRenderer.releaseRender(renderRef);
       this._resetTileCache();
-      return queryResult;
+      return queryResult.length ? queryResult : undefined;
     });
   }
 
