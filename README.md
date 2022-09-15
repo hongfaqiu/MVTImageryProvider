@@ -2,7 +2,7 @@
 
 Render Mapbox style in CesiumJs. This project is very simple, because the complex rendering task is compeleted by mapbox-gl-js, you should also check [Mapbox-vector-tiles-basic-js-renderer](https://github.com/landtechnologies/Mapbox-vector-tiles-basic-js-renderer) for more detail.
 
-![](https://img.shields.io/bundlephobia/minzip/mvt-imagery-provider) <a href="https://www.npmjs.com/package/mvt-imagery-provider">![](https://img.shields.io/npm/v/mvt-imagery-provider)</a>
+![mvt-basic-render](http://img.badgesize.io/https://unpkg.com/mvt-basic-render?compression=gzip&label=gzip) ![mvt-imagery-provider](http://img.badgesize.io/https://unpkg.com/mvt-imagery-provider?compression=gzip&label=gzip) <a href="https://www.npmjs.com/package/mvt-imagery-provider">![](https://img.shields.io/npm/v/mvt-imagery-provider)</a>
 
 ## Install
 

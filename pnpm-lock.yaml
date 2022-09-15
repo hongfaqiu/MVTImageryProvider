@@ -19,7 +19,7 @@ specifiers:
   css-loader: ^6.7.1
   html-webpack-plugin: ^5.5.0
   microbundle: ^0.14.2
-  mvt-basic-render: ^0.2.2
+  mvt-basic-render: ^0.3.2
   semantic-release: ^19.0.3
   style-loader: ^3.3.1
   ts-node: ^10.8.1
@@ -30,7 +30,7 @@ specifiers:
   webpack-dev-server: ^4.9.2
 
 dependencies:
-  mvt-basic-render: 0.2.2
+  mvt-basic-render: 0.3.2
 
 devDependencies:
   '@babel/core': 7.18.2
@@ -4930,8 +4930,8 @@ packages:
       thunky: 1.1.0
     dev: true
 
-  /mvt-basic-render/0.2.2:
-    resolution: {integrity: sha512-yKW0HiZrswq1OSm0wF8LuyYzu4YGHtbgSHgeUfwEJHneuKamni7Yb8hU3RN536Y3jgK2MbL15oL9OiJlqZou9Q==}
+  /mvt-basic-render/0.3.2:
+    resolution: {integrity: sha512-NqUdfc+csxwK29aX3TvhVNyBIZ30jcsmaKDRO95vmSwBjRjbBPB+BZfCmGlLU8oqBcVcZYQN5eADS+bFx8S2Tg==}
     engines: {node: '>=12.21.0'}
     hasBin: true
     dev: false
