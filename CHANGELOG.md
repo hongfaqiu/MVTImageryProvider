@@ -1,3 +1,10 @@
+## [0.7.2](https://github.com/hongfaqiu/MVTImageryProvider/compare/v0.7.1...v0.7.2) (2022-09-15)
+
+
+### Bug Fixes
+
+* remove umd release ([c96fc3a](https://github.com/hongfaqiu/MVTImageryProvider/commit/c96fc3aef0e5831266eea5b69af8797d465c0f30))
+
 ## [0.7.1](https://github.com/hongfaqiu/MVTImageryProvider/compare/v0.7.0...v0.7.1) (2022-08-22)
 
 
