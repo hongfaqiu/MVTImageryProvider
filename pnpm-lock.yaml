@@ -13,6 +13,9 @@ importers:
       '@semantic-release/git':
         specifier: ^10.0.1
         version: 10.0.1(semantic-release@21.0.6)
+      '@semrel-extra/npm':
+        specifier: ^1.2.2
+        version: 1.2.2
       multi-semantic-release:
         specifier: ^3.0.2
         version: 3.0.2
@@ -990,6 +993,10 @@ packages:
       semantic-release: 21.0.6
     transitivePeerDependencies:
       - supports-color
+    dev: true
+
+  /@semrel-extra/npm@1.2.2:
+    resolution: {integrity: sha512-QoOJFUd00ORaqOQUe2wYmwPwa7NRdGGfUhzjZ9UEZqoqymXaBDVmFF2hE3h8mFaTa/iWpAyRrrjTsg8HbSpZyw==}
     dev: true
 
   /@tweenjs/tween.js@18.6.4:
