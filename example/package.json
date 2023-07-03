@@ -1,5 +1,6 @@
 {
   "name": "mvt-imagery-provider-example",
+  "private": true,
   "scripts": {
     "start": "vite",
     "build": "vite build"
