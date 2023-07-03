@@ -2,11 +2,8 @@ name: Release
 on:
   push:
     branches:
+      - main
       - master
-      - next
-      - next-major
-      - alpha
-      - beta
 
 permissions:
   packages: write

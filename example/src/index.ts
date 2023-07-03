@@ -16,15 +16,14 @@ const viewer = new Viewer('cesiumContainer', {
   orderIndependentTranslucency: false,
 });
 
-const imageryProvider = await ArcGisMapServerImageryProvider.fromUrl('https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer', {
+ArcGisMapServerImageryProvider.fromUrl('https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer', {
   enablePickFeatures: false
-});
-
-viewer.imageryLayers.remove(viewer.imageryLayers.get(0));
-viewer.imageryLayers.addImageryProvider(imageryProvider)
-
-const provider: any = new MVTImageryProvider({
-  style: 'https://demotiles.maplibre.org/style.json',
-});
-
-const imageryLayer = viewer.imageryLayers.addImageryProvider(provider);
+}).then(imageryProvider => {
+  viewer.imageryLayers.remove(viewer.imageryLayers.get(0));
+  viewer.imageryLayers.addImageryProvider(imageryProvider)
+  const provider: any = new MVTImageryProvider({
+    style: 'https://demotiles.maplibre.org/style.json',
+  });
+  
+  const imageryLayer = viewer.imageryLayers.addImageryProvider(provider);
+})
