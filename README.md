@@ -21,13 +21,23 @@ import MVTImageryProvider from 'mvt-imagery-provider';
 
 const cesiumViewer = new Cesium.Viewer("cesiumContainer");
 
-const provider = new MVTImageryProvider({
-  style: 'https://demotiles.maplibre.org/style.json',
+const provider = await MVTImageryProvider.fromUrl('https://demotiles.maplibre.org/style.json', {
   accessToken: MAPBOX_TOKEN
 });
 
 cesiumViewer.imageryLayers.addImageryProvider(provider);
 
+```
+
+You can also use the New keyword to create a new MVTImageryProvider, which was deprecated after cesium@1.104+
+
+```ts
+const provider = new MVTImageryProvider({
+  style: STYLE_URL,
+});
+provider.readyPromise.then(() => {
+  cesiumViewer.imageryLayers.addImageryProvider(provider);
+})
 ```
 
 ## API
@@ -53,19 +63,28 @@ class MVTImageryProvider {
         style: 'https://demotiles.maplibre.org/style.json'
       });
   */
-  constructor(options: MVTImageryProviderOptions);
+  constructor(options: MVTImageryProviderOptions & {
+      /**
+       * Deprecated
+       *
+       * You can use fromUrl instead
+       * @example
+       * const provider = await MVTImageryProvider.fromUrl(url)
+       */
+      style: string | Resource | StyleSpecification;
+  });
   /**
    * get mapbox style json obj
    */
   get style(): StyleSpecification;
   get isDestroyed(): boolean;
+  static fromUrl(url: Resource | string | StyleSpecification, options?: MVTImageryProviderOptions): Promise<MVTImageryProvider>;
   requestImage(x: number, y: number, level: number, releaseTile?: boolean): Promise<HTMLImageElement | HTMLCanvasElement | any> | undefined;
   pickFeatures(x: number, y: number, zoom: number, longitude: number, latitude: number): Promise<ImageryLayerFeatureInfo[]> | undefined;
   destroy(): void;
 }
 
 type MVTImageryProviderOptions = {
-  style: string | Resource | StyleSpecification;
   /** accessToken needed if mapbox style not public */
   accessToken?: string;
   /** forceHTTPS defaults false */

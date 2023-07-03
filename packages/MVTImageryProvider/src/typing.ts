@@ -6,7 +6,6 @@ export interface Coords {
 }
 
 export declare type MVTImageryProviderOptions = {
-  style: string | Resource | StyleSpecification;
   /** accessToken needed if mapbox style not public */
   accessToken?: string;
   /** forceHTTPS defaults false */

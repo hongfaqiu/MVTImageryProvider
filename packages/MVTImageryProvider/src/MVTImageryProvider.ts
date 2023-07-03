@@ -1,5 +1,5 @@
 
-import { Credit, Event, WebMercatorTilingScheme, DefaultProxy, GeographicTilingScheme, Math as CMath, Resource, ImageryLayerFeatureInfo, } from "cesium";
+import { Credit, Event, WebMercatorTilingScheme, DefaultProxy, GeographicTilingScheme, Math as CMath, Resource, ImageryLayerFeatureInfo, defined, } from "cesium";
 import { Coords, MVTImageryProviderOptions, StyleSpecification } from "./typing";
 import * as mapbox from 'mvt-basic-render';
 
@@ -9,7 +9,7 @@ const baseCanv = document.createElement('canvas');
 class MVTImageryProvider {
   mapboxRenderer: any;
   ready: boolean;
-  readyPromise: Promise<void>;
+  readyPromise: Promise<boolean>;
   rectangle: any;
   tileSize: number;
   tileWidth: number;
@@ -46,7 +46,16 @@ class MVTImageryProvider {
         style: 'https://demotiles.maplibre.org/style.json'
       });
    */
-  constructor(options: MVTImageryProviderOptions) {
+  constructor(options: MVTImageryProviderOptions & {
+    /**
+     * Deprecated
+     * 
+     * You can use fromUrl instead
+     * @example 
+     * const provider = await MVTImageryProvider.fromUrl(url)
+     */
+    style: string | Resource | StyleSpecification;
+  }) {
 
     this.ready = false;
     this.tilingScheme = options.tilingScheme ?? new WebMercatorTilingScheme();;
@@ -63,25 +72,11 @@ class MVTImageryProvider {
     this._accessToken = options.accessToken;
     this._enablePickFeatures = options.enablePickFeatures ?? true
 
-    this.readyPromise = this._preLoad(options.style).then(style => {
-      this._style = style
-      this.mapboxRenderer = new mapbox.BasicRenderer({
-        style,
-        canvas: baseCanv,
-        token: this._accessToken,
-        transformRequest: options.transformRequest
+    if (defined(options.style)) {
+      this.readyPromise = this._build(options.style, options).then(() => {
+        return true;
       })
-
-      if (options.showCanvas) {
-        this.mapboxRenderer.showCanvasForDebug();
-      }
-
-      return this.mapboxRenderer
-    }).then(renderObj => {
-      renderObj._style.loadedPromise.then(() => {
-        this.ready = true
-      });
-    })
+    }
   }
 
   /**
@@ -102,6 +97,32 @@ class MVTImageryProvider {
    */
   get errorEvent() {
     return this._error
+  }
+
+  private async _build(url: Resource | string | StyleSpecification, options: MVTImageryProviderOptions = {}) {
+    const style = await this._preLoad(url);
+
+    this._style = style
+    this.mapboxRenderer = new mapbox.BasicRenderer({
+      style,
+      canvas: baseCanv,
+      token: options.accessToken,
+      transformRequest: options.transformRequest
+    })
+
+    if (options.showCanvas) {
+      this.mapboxRenderer.showCanvasForDebug();
+    }
+    await this.mapboxRenderer._style.loadedPromise;
+    this.readyPromise = Promise.resolve(true);
+    this.ready = true;
+  }
+
+  static async fromUrl(url: Resource | string | StyleSpecification, options: MVTImageryProviderOptions = {}) {
+    const provider = new MVTImageryProvider(options as any);
+    await provider._build(url, options)
+
+    return provider;
   }
 
   private _preLoad(data: string | Resource | StyleSpecification): Promise<StyleSpecification> {

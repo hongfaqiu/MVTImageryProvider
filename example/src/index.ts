@@ -18,12 +18,10 @@ const viewer = new Viewer('cesiumContainer', {
 
 ArcGisMapServerImageryProvider.fromUrl('https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer', {
   enablePickFeatures: false
-}).then(imageryProvider => {
+}).then(async imageryProvider => {
   viewer.imageryLayers.remove(viewer.imageryLayers.get(0));
   viewer.imageryLayers.addImageryProvider(imageryProvider)
-  const provider: any = new MVTImageryProvider({
-    style: 'https://demotiles.maplibre.org/style.json',
-  });
+  const provider: any = await MVTImageryProvider.fromUrl('https://demotiles.maplibre.org/style.json');
   
   const imageryLayer = viewer.imageryLayers.addImageryProvider(provider);
 })
