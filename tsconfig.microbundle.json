@@ -1,7 +1,0 @@
-{
-  "compilerOptions": {
-    "allowSyntheticDefaultImports": true,
-  },
-  "include": ["demo/src/utils/MVTImageryProvider"],
-  "exclude": ["node_modules", "lib"]
-}

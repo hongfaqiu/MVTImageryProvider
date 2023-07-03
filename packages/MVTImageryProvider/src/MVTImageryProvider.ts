@@ -1,9 +1,9 @@
 
-import { Credit, Event, WebMercatorTilingScheme, DefaultProxy, GeographicTilingScheme, Math as CMath, Resource, ImageryLayerFeatureInfo,  } from "cesium";
-import { Coords, MVTImageryProviderOptions, StyleSpecification } from "./typings";
-import * as mapbox from 'mvt-basic-render'
+import { Credit, Event, WebMercatorTilingScheme, DefaultProxy, GeographicTilingScheme, Math as CMath, Resource, ImageryLayerFeatureInfo, } from "cesium";
+import { Coords, MVTImageryProviderOptions, StyleSpecification } from "./typing";
+import * as mapbox from 'mvt-basic-render';
 
-// 创建一个全局变量作为pbfBasicRenderer渲染模板，避免出现16个canvas上下文的浏览器限制，以便Cesium ImageLayer.destory()正常工作。
+// 创建一个全局变量作为pbfBasicRender渲染模板，避免出现16个canvas上下文的浏览器限制，以便Cesium ImageLayer.destory()正常工作。
 // https://github.com/mapbox/mapbox-gl-js/issues/7332
 const baseCanv = document.createElement('canvas');
 class MVTImageryProvider {
@@ -101,7 +101,7 @@ class MVTImageryProvider {
    * @type {Event}
    */
   get errorEvent() {
-  return this._error
+    return this._error
   }
 
   private _preLoad(data: string | Resource | StyleSpecification): Promise<StyleSpecification> {
@@ -118,14 +118,14 @@ class MVTImageryProvider {
       const prefix = "https://api.mapbox.com/";
       if (data.url.startsWith("mapbox://"))
         data.url = data.url.replace("mapbox://", prefix);
-      if(this._accessToken)
+      if (this._accessToken)
         data.appendQueryParameters({
           access_token: this._accessToken
         })
       promise = data.fetchJson()
     }
     return Promise.resolve(promise)
-      .catch( error => {
+      .catch(error => {
         this._error.raiseEvent(error);
         throw error;
       });
@@ -181,7 +181,7 @@ class MVTImageryProvider {
     level: number,
     releaseTile = true
   ): Promise<HTMLImageElement | HTMLCanvasElement | any> | undefined {
-    if(level < this.minimumLevel || level > this.maximumLevel) return undefined
+    if (level < this.minimumLevel || level > this.maximumLevel) return undefined
 
     this.mapboxRenderer.filterForZoom(level);
     const tilesSpec = this.mapboxRenderer
@@ -191,7 +191,7 @@ class MVTImageryProvider {
     return new Promise((resolve, reject) => {
       const canv = this._createTile()
       const ctx = canv.getContext("2d")
-      if(ctx) ctx.globalCompositeOperation = 'copy'
+      if (ctx) ctx.globalCompositeOperation = 'copy'
       const renderRef = this.mapboxRenderer.renderTiles(
         ctx,
         {
@@ -226,7 +226,7 @@ class MVTImageryProvider {
   }
 
   pickFeatures(x: number, y: number, zoom: number, longitude: number, latitude: number) {
-    if(!this._enablePickFeatures) return undefined
+    if (!this._enablePickFeatures) return undefined
 
     return this.requestImage(x, y, zoom, false)?.then((renderRef) => {
       let targetSources = this.mapboxRenderer.getVisibleSources(zoom);

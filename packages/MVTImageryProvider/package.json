@@ -1,0 +1,41 @@
+{
+  "name": "mvt-imagery-provider",
+  "version": "0.7.2",
+  "description": "A Mapbox style renderer for CesiumJS",
+  "type": "module",
+  "main": "./lib/index.js",
+  "module": "./lib/index.js",
+  "types": "./lib/index.d.ts",
+  "scripts": {
+    "build": "rollup -c",
+    "dev": "rollup -c --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/hongfaqiu/MVTImageryProvider.git"
+  },
+  "keywords": [
+    "Mapbox Style",
+    "Vector Tile",
+    "Cesium"
+  ],
+  "license": "MIT",
+  "peerDependencies": {
+    "cesium": "*"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^25.0.2",
+    "@rollup/plugin-node-resolve": "^15.1.0",
+    "@types/node": "^20.3.3",
+    "cesium": "^1.106.1",
+    "mvt-basic-render": "^0.3.4",
+    "rollup": "^3.26.0",
+    "rollup-plugin-dts": "^5.3.0",
+    "rollup-plugin-esbuild": "^5.0.0",
+    "typescript": "^5.1.6"
+  },
+  "files": [
+    "lib",
+    "README.md"
+  ]
+}

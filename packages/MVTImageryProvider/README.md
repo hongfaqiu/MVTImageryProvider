@@ -111,11 +111,10 @@ Reference to the [Mapbox Style Specification](https://docs.mapbox.com/mapbox-gl-
 
 [online Demo](https://mvti-magery-provider.vercel.app/)
 
-Launch the app in the demo folder, and then visit http://localhost:5174/
+Launch the app in the demo folder, and then visit http://localhost:8080/
 
 ```node
 pnpm install
-cd example
 npm start
 ```
 
