@@ -23,12 +23,11 @@
   "peerDependencies": {
     "cesium": "*"
   },
+  "dependencies": {
+    "mvt-basic-render": "^0.3.4"
+  },
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^25.0.2",
-    "@rollup/plugin-node-resolve": "^15.1.0",
-    "@types/node": "^20.3.3",
     "cesium": "^1.106.1",
-    "mvt-basic-render": "^0.3.4",
     "rollup": "^3.26.0",
     "rollup-plugin-dts": "^5.3.0",
     "rollup-plugin-esbuild": "^5.0.0",

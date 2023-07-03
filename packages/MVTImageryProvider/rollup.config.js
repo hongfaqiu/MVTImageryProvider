@@ -1,19 +1,19 @@
-import esbuild from 'rollup-plugin-esbuild';
-import dts from 'rollup-plugin-dts';
-import { defineConfig } from 'rollup';
-import commonjs from '@rollup/plugin-commonjs';
-import resolve from '@rollup/plugin-node-resolve';
+import { builtinModules } from 'module'
+import esbuild from 'rollup-plugin-esbuild'
+import dts from 'rollup-plugin-dts'
+import { defineConfig } from 'rollup'
+import pkg from './package.json' assert { type: 'json' };
 
 const external = [
-  'cesium',
+  ...builtinModules,
+  ...Object.keys(pkg.dependencies || {}),
+  ...Object.keys(pkg.peerDependencies || {}),
 ]
 
 const plugins = [
-  commonjs(),
   esbuild({
     target: 'node14',
   }),
-  resolve(),
 ]
 
 export default defineConfig([

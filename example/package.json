@@ -13,8 +13,7 @@
   },
   "dependencies": {
     "cesium": "^1.106.1",
-    "mvt-imagery-provider": "workspace:*",
-    "proj4-fully-loaded": "^0.2.0"
+    "mvt-imagery-provider": "workspace:*"
   },
   "license": "MIT"
 }
