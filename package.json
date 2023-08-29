@@ -2,7 +2,7 @@
   "name": "mvt-imagery-provider",
   "private": true,
   "npmClient": "pnpm",
-  "packageManager": "pnpm@8.5.0",
+  "packageManager": "pnpm@8.6.12",
   "type": "module",
   "scripts": {
     "build:lib": "pnpm -r --filter \"./packages/**\" run build",

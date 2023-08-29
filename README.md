@@ -6,6 +6,8 @@ Render Mapbox style in CesiumJs. This project is very simple, because the comple
 
 [![CodeSandbox](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/p/sandbox/mvt-imagery-provider-example-gzflyc)
 
+[中文Readme](./README_CN.md)
+
 ## Install
 
 ```bash
@@ -130,7 +132,7 @@ Reference to the [Mapbox Style Specification](https://docs.mapbox.com/mapbox-gl-
 
 ## Demo
 
-[online Demo](https://mvti-magery-provider.vercel.app/)
+[online Demo](https://mvtimageryprovider.pages.dev/)
 
 Launch the app in the demo folder, and then visit http://localhost:5173/
 
