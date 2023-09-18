@@ -1,5 +1,9 @@
 lockfileVersion: '6.0'
 
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
 importers:
 
   .:
@@ -45,8 +49,8 @@ importers:
   packages/MVTImageryProvider:
     dependencies:
       mvt-basic-render:
-        specifier: ^0.3.4
-        version: 0.3.4
+        specifier: ^0.3.5
+        version: 0.3.5
     devDependencies:
       cesium:
         specifier: ^1.106.1
@@ -2487,8 +2491,8 @@ packages:
       - supports-color
     dev: true
 
-  /mvt-basic-render@0.3.4:
-    resolution: {integrity: sha512-PLxdXr5xg/AQLdz7vevuLLEhpk6cLLTg5TurWq1x2xUfKFxXBqQicCxnkHQSw3qPAvxEWa3hwz8rNABxEbwi0Q==}
+  /mvt-basic-render@0.3.5:
+    resolution: {integrity: sha512-5krXhDMl2MpJgTMhaEwVtomjVGk89HneYIQemqCkx1dCpi4F2VU+Z2T0JAmcBvryMWLf+2mOHaNvcl7qlTuBSQ==}
     engines: {node: '>=12.21.0'}
     hasBin: true
     dev: false
