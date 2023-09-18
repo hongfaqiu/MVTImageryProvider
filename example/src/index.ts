@@ -19,6 +19,7 @@ const viewer = new Viewer('cesiumContainer', {
   orderIndependentTranslucency: false,
 });
 
-const provider: any = await MVTImageryProvider.fromUrl('https://demotiles.maplibre.org/style.json');
+MVTImageryProvider.fromUrl('https://demotiles.maplibre.org/style.json').then(provider => {
+  const imageryLayer = viewer.imageryLayers.addImageryProvider(provider as any);
+});
 
-const imageryLayer = viewer.imageryLayers.addImageryProvider(provider);

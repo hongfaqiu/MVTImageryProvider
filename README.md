@@ -139,7 +139,7 @@ Launch the app in the demo folder, and then visit http://localhost:5173/
 ```node
 pnpm install
 cd example
-npm start
+pnpm dev
 ```
 
 | ![bguCSe.png](https://s1.ax1x.com/2022/07/28/vCk4z9.png) | ![macrostrat.png](https://s1.ax1x.com/2022/07/28/vCkcZV.png) |
