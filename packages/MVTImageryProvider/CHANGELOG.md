@@ -1,3 +1,10 @@
+## mvt-imagery-provider [1.0.3](https://github.com/hongfaqiu/MVTImageryProvider/compare/mvt-imagery-provider@1.0.2...mvt-imagery-provider@1.0.3) (2024-01-09)
+
+
+### Bug Fixes
+
+* top await ([115c682](https://github.com/hongfaqiu/MVTImageryProvider/commit/115c6825e2d80a4fe8ba7d88b2427005ceb263af))
+
 ## mvt-imagery-provider [1.0.2](https://github.com/hongfaqiu/MVTImageryProvider/compare/mvt-imagery-provider@1.0.1...mvt-imagery-provider@1.0.2) (2023-09-18)
 
 
