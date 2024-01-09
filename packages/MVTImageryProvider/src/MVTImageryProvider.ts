@@ -129,10 +129,7 @@ class MVTImageryProvider {
     let promise: any = data
     if (typeof data === 'string') {
       data = new Resource({
-        url: data,
-        queryParameters: {
-          access_token: this._accessToken
-        }
+        url: data
       })
     }
     if (data instanceof Resource) {
