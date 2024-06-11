@@ -11,7 +11,7 @@
     "vite-plugin-cesium": "^1.2.22"
   },
   "dependencies": {
-    "cesium": "^1.106.1",
+    "cesium": "^1.118.2",
     "mvt-imagery-provider": "workspace:*"
   },
   "license": "MIT"
